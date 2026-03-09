@@ -146,6 +146,7 @@ Proceeding without confirmation misaligns the entire resume and requires full re
 - Remaining budget slots and what could fill them
 - Forced exclusions per provenance flags
 - Focus directive impact (what changed vs Priority Matrix defaults)
+- CV: confirm first bullet of first experience is 2L (page 1 rule)
 
 **Update session file** — write Bullet Plan tables. Status: `Phase 1: DONE (N bullets confirmed)`
 

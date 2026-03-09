@@ -75,3 +75,4 @@ See `CLAUDE.md` for your project-specific KB corrections log. Always check befor
 
 Resume: ~20 variable bullets (exact count depends on skills config + immigration line). CV: 19-21 bullets, 45 rendered lines.
 Resume bullets: ALL 2L. CV bullets: 2L/3L mix OK.
+**CV Page 1 rule:** First bullet of first experience MUST be 2L. A 3L first bullet overflows page 1.

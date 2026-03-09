@@ -171,6 +171,8 @@ The exact line budget depends on your template's FIXED sections (publications, p
 
 **Position header rule:** The position title + date must fit on ONE line. If the title is too long, shorten the title so the date doesn't wrap to a second line. Wrapped dates waste a full vertical line and break visual alignment. Test by compiling — if the date wraps, trim the title.
 
+**CV Page 1 rule:** The FIRST bullet of the FIRST experience position MUST be 2L (not 3L). A 3L first bullet pushes content below the page 1 fold, wasting prime real estate. Plan this during Phase 1 bullet planning — if the top-priority achievement needs 3L, make it the SECOND bullet and lead with a strong 2L bullet instead.
+
 **Budget workflow:** The line budget is pre-calculated from your template. Do NOT recalculate. Use the bullet counts above directly. After generation, verify that total bullet rendered lines = 45 (count each bullet's rendered lines and sum).
 
 ---
