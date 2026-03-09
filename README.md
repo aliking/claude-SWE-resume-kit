@@ -80,7 +80,7 @@ claude-resume-kit/
 │   ├── examples/                      # Fictional "Dr. Jordan Chen" — full worked example
 │   ├── experience/                    # YOUR experience files (built by /setup-build-kb)
 │   ├── bundles/                       # YOUR role-type bundles (built by /setup-build-kb)
-│   └── support/                       # YOUR skills taxonomy, pub metadata, etc.
+│   └── support/                       # Skills taxonomy, pub metadata, AI fingerprint rules
 ├── knowledge_base/
 │   ├── extractions/                   # Paper extractions (built by /setup-extract)
 │   ├── papers/                        # Drop your PDFs / .tex source here
@@ -155,7 +155,7 @@ Claude reads the paper, asks clarifying questions about your specific contributi
 This synthesizes all extractions into:
 - **Experience files** (`resume_builder/experience/`) — one per position, with pre-written 2L and 3L bullet variants for every achievement
 - **Role-type bundles** (`resume_builder/bundles/`) — positioning guides for each audience (what to emphasize, what to omit, how to frame)
-- **Support files** (`resume_builder/support/`) — skills taxonomy, publication metadata, etc.
+- **Support files** (`resume_builder/support/`) — skills taxonomy, publication metadata, AI fingerprint avoidance rules
 
 ### 6. Customize your LaTeX templates
 
@@ -341,6 +341,7 @@ Session 3:  /critique                     → critique .md with score
 - **Character-precise budgets** — every bullet is calibrated to fit the template geometry. No "try to keep it short."
 - **Session files as state** — all decisions for a JD live in one file. Skills can recover from interruptions.
 - **Anti-fabrication by design** — provenance flags, verb discipline, and corrections logs prevent overclaiming even under pressure to impress.
+- **AI fingerprint avoidance** — a dedicated rules file (`resume_builder/support/ai_fingerprint_rules.md`) is loaded by all 4 generation/critique skills. It includes banned words and phrases (with technical exceptions), structural anti-patterns (e.g., excessive `-ing` bullet endings, prose em-dashes), positive markers to prefer, and a 12-item post-generation checklist. Templates use period separators instead of em-dashes in Fellowships/Honors sections to avoid a common AI tell.
 
 ---
 
