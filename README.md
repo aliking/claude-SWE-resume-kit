@@ -14,6 +14,7 @@ This framework treats resume generation as a **structured pipeline** with enforc
 - **Anti-fabrication rules** baked into every skill — accuracy always beats impressiveness
 - **Provenance tracking** — knows what's published vs. under review vs. internal
 - **Role-type bundles** that frame the same work differently for different audiences
+- **AI fingerprint avoidance** — banned words, structural anti-patterns, and a 12-item post-gen checklist so output reads human-written
 - **Mechanical enforcement** of page budgets, character limits, and formatting rules
 - **Session files** that track every decision, making edits and critiques stateful
 - **LaTeX output** — pixel-perfect formatting, not "close enough"
@@ -29,7 +30,7 @@ Job Description ──→ /make-resume ──→ Tailored Resume/CV (.tex)      
                          │              ↓                                   │
                     /make-cl ──→ Cover Letter (.tex)                        │
                          │              ↓                                   │
-                    /critique ──→ 8-Dimension Score + Fixes                 │
+                    /critique ──→ 9-Part Score + AI Scan + Fixes                 │
                          │              ↓                                   │
                     /edit-resume ──→ Refined Package                        │
 ```
