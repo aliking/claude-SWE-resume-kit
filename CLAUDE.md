@@ -8,32 +8,35 @@
 
 ```
 .claude/skills/
-├── setup-extract/SKILL.md       # Extract from papers/files into structured extractions
+├── setup-extract/SKILL.md       # Extract from projects, initiatives, and files into structured extractions
 ├── setup-build-kb/SKILL.md      # Build experience files, bundles, taxonomy from extractions
-├── make-resume/SKILL.md         # Phase 0-2: JD research → bullet plan → resume/CV generation
+├── make-resume/SKILL.md         # Phase 0-2: JD research → bullet plan → resume generation
 ├── make-cl/SKILL.md             # Cover letter generation from session file
-├── edit-resume/SKILL.md         # Edit resume/CV from critique or user feedback
+├── edit-resume/SKILL.md         # Edit resume from critique or user feedback
 └── critique/SKILL.md            # 8-dimension critique of full package
 
 resume_builder/
 ├── reference/
 │   ├── shared_ops.md            # Session startup, derivation, workflow — ALL skills
-│   ├── resume_reference.md      # Resume/CV rules — /make-resume, /edit-resume
+│   ├── resume_reference.md      # Resume rules — /make-resume, /edit-resume
 │   ├── cl_reference.md          # CL rules — /make-cl, /edit-resume (CL edits)
 │   ├── critical_rules.md        # Compact re-read — /make-resume Phase 2
 │   ├── session_file_template.md # Session file format
 │   └── critique_framework.md    # 8-part critique system
 ├── templates/                   # LaTeX .cls + .tex templates
 ├── helpers/                     # char_count.py
-├── examples/                    # Example KB for a fictional researcher
+├── examples/                    # Example KB for a fictional candidate
 ├── experience/                  # /setup-build-kb outputs: one file per position
 ├── bundles/                     # /setup-build-kb outputs: one per target role type
 └── support/                     # /setup-build-kb outputs: skills taxonomy, pub metadata, etc.
 
 knowledge_base/                  # User's raw materials
 ├── extractions/                 # /setup-extract outputs here
-├── papers/                      # Drop your PDFs / .tex source here
-└── notes/                       # Any other reference material
+└── sources/
+	├── resume_inputs/           # Existing resume PDFs
+	├── performance_reviews/     # Annual/performance review PDFs
+	├── supporting_docs/         # Project docs and notes
+	└── repo_manifests/          # Markdown files with local repo paths/ranges
 
 config.md                        # User configuration (email, provenance, role types)
 ```
@@ -44,9 +47,11 @@ config.md                        # User configuration (email, provenance, role t
 
 You are simultaneously:
 1. **Expert Resume Strategist** — STAR bullets, ATS optimization, strategic framing
-2. **Senior Hiring Manager** (resumes) / **Senior Scientist** (CVs) — evaluate from the reader's chair
+2. **Senior Hiring Manager / Engineering Leader** — evaluate from the reader's chair
 
 You write as the strategist but critique as the reader.
+
+Treat technical delivery, operational excellence, mentoring, hiring, documentation, onboarding, and culture-building as valid resume evidence when they have clear scope and support.
 
 **Hard rules:**
 - Output .tex files ONLY. User compiles locally.
@@ -78,34 +83,34 @@ When in doubt between a more impressive but less accurate claim and a less impre
 
 ### Provenance Discipline
 - Read `config.md` Provenance Flags before every generation
-- NEVER claim unpublished work is published
-- NEVER claim internal tools are peer-reviewed
-- NEVER inflate author position (contributing does not equal first author)
-- NEVER claim results from collaborators' experiments as the user's own
+- NEVER claim prototype work is deployed in production
+- NEVER claim internal tools are open source
+- NEVER inflate contribution level (contributor does not equal lead developer)
+- NEVER claim results from team projects as the user's sole work
 
 ### Verb Discipline
 - **Full-ownership verbs** (Developed, Built, Engineered, Designed) ONLY for work the user performed independently
-- **Hedged verbs** (Contributed, Provided, Supported) for shared or contributing-author work
+- **Hedged verbs** (Contributed, Assisted, Supported, Consulted on) for shared team work
 - When in doubt, hedge
 
 ---
 
 ## Generation Rules
 
-### Rule 1: No code folder names as package names
-NEVER use internal code folder names as if they are software packages. Always describe the tool/method instead (e.g., "custom FEM solver" not "FEM_project/").
+### Rule 1: No internal project names as product names
+NEVER use internal code names or project codenames as if they are commercial products. Always describe the actual functionality (e.g., "e-commerce platform" not "Project Phoenix").
 
 ### Rule 2: No LOC counts or test counts in output
-NEVER include lines-of-code counts or test counts in resume, CV, or cover letter output. Focus on what the tool does, its impact, and adoption.
+NEVER include lines-of-code counts or test counts in resume or cover letter output. Focus on what the tool does, its impact, and adoption.
 
-### Rule 3: Publication status accuracy
-Only list papers as "Under Review" if they are actually under review. Check `config.md` Provenance Flags.
+### Rule 3: Publication or artifact status accuracy
+Only list publications, talks, certifications, or other external artifacts when they actually exist in that form. Check `config.md` Provenance Flags.
 
-### Rule 4: Publication format — use et al.
-Use et al. format. Show authors up to and including the user's position, then "et al." When total authors <= 4, show all names.
+### Rule 4: Publication formatting is optional
+If publications are part of the user's profile, use et al. format. Show authors up to and including the user's position, then "et al." When total authors <= 4, show all names.
 
-### Rule 5: Funding is not a personal award
-Institutional project funding (grants, internal R&D programs) is NOT a personal fellowship or award. Never list funding sources under Fellowships & Honors.
+### Rule 5: Team programs are not personal awards
+Institutional funding, company programs, or team-wide initiatives are NOT personal awards unless the user individually received them. Never list shared program participation under Fellowships & Honors.
 
 ---
 

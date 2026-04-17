@@ -30,5 +30,12 @@ __pycache__/
 # Build planning (not shipped)
 .planning/
 
+# Knowledge base sources and extractions (keep folder structure, ignore generated content)
+knowledge_base/**/*
+
+# JDs except the example
+JDs/*.txt
+!example_jd.txt
+
 # Session-specific (users may want to keep these — uncomment to ignore)
 # output/
