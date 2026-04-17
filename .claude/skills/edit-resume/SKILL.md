@@ -1,5 +1,6 @@
 ---
-description: Edit existing resume/CV or cover letter from critique feedback and user suggestions
+name: edit-resume
+description: Edit existing resume or cover letter from critique feedback and user suggestions
 user-invocable: true
 ---
 
@@ -24,13 +25,13 @@ Read `config.md` Provenance Flags before editing any content. Verify every claim
 
 - Use the email from `config.md` Personal Info in all outputs
 - Source ALL bullet content from `resume_builder/experience/` files. Never fabricate.
-- Resume bullets: ALL variable bullets must be 2L (CV: 2L/3L mix OK, check `config.md` Document Preferences)
+- Resume bullets: ALL variable bullets must be 2L unless explicitly changed by user instruction
 - Run `python3 resume_builder/helpers/char_count.py` after edits — the tool is authoritative
 
 ### FIXED Sections — Refuse if Asked to Edit
 Check `config.md` FIXED Sections for the list of template-locked sections. Say no and explain: these are template-locked across all outputs.
 
-VARIABLE sections only: Summary, Technical Skills, Research Experience bullets/headers.
+VARIABLE sections only: Summary, Skills, Experience bullets/headers.
 
 ---
 
@@ -68,7 +69,7 @@ Read in this order:
 4. Critique file (if provided in `$ARGUMENTS`)
 5. JD file (path from session file's JD Info section)
 6. Compile current .tex and record baseline page count
-7. Run: `python3 resume_builder/helpers/char_count.py -f [resume|cv] [file.tex]`
+7. Run: `python3 resume_builder/helpers/char_count.py -f resume [file.tex]`
 
 **Record baseline in session file** under `## Edit [N] Baseline` (scan existing Edit History sections; next N = max existing + 1, or 1 if none):
 
@@ -108,7 +109,7 @@ Recalculate total variable bullets and rendered lines. Compare against budget fr
 If OVER budget: present overflow and ask user which bullet to drop or shorten.
 Show: `Budget: [N] bullets ([M] rendered lines) vs target [T]. PASS/FAIL`
 
-If edit targets **cover letter** (not resume/CV): note this — Phase 4 will use CL-specific gates. Load CL .tex path from session file Output Files section.
+If edit targets **cover letter** (not resume): note this — Phase 4 will use CL-specific gates. Load CL .tex path from session file Output Files section.
 
 ### >>>>>> MANDATORY STOP — DO NOT PROCEED <<<<<<
 Present numbered edit plan. Each item shows: what, why, source, classification (MODIFY/ADD/SWAP/FIXED).
@@ -135,7 +136,7 @@ Apply edits one section at a time. After each edited section:
 
 1. Run char count gate:
    ```bash
-   python3 resume_builder/helpers/char_count.py -f [resume|cv] output/<FolderName>/[file].tex
+   python3 resume_builder/helpers/char_count.py -f resume output/<FolderName>/[file].tex
    ```
 2. Fix any OVER violations or orphans before next section
 3. If a bullet expansion doesn't render as expected (1L when targeting 2L, or 3L), adjust immediately
@@ -144,11 +145,11 @@ Update session file Edit N Status after each individual edit:
 - Edit 1 (orphan fix): DONE
 - Edit 2 (Summary rewrite): IN_PROGRESS
 
-### Resume/CV Verification Gates
+### Resume Verification Gates
 | Gate | Check | If FAIL |
 |------|-------|---------|
 | Char count | No OVER violations | Fix bullet before proceeding |
-| Page fill | Resume: <= 3 lines white space. CV: check rendered line target | Expand/trim variable bullets |
+| Page fill | Resume: <= 3 lines white space | Expand/trim variable bullets |
 | Page count | Match `config.md` Document Preferences | Trim/expand variable content |
 | Orphan | 2L bullet last line >= 70% | Pad or trim |
 | Title width | Position title + date fits 1 line | Shorten title |
@@ -157,9 +158,9 @@ Update session file Edit N Status after each individual edit:
 ### Cover Letter Verification Gates (if CL was edited)
 | Gate | Check | If FAIL |
 |------|-------|---------|
-| Word count | Industry 250-300, Lab/Academic 350-450 | Trim/expand |
+| Word count | Product/Startup 250-320, Enterprise/Platform 300-420, Mission-driven/Public sector 320-450 | Trim/expand |
 | Page fill | 1pg: well-filled. 2pg: page 2 >= half filled before signature | Adjust |
-| Paragraph count | Industry 3, Lab/Academic 4 | Restructure |
+| Paragraph count | Product/Startup 3, Enterprise/Platform 3-4, Mission-driven/Public sector 4 | Restructure |
 | Anti-patterns | No generic opener, no defensive framing, no credential dump | Rewrite |
 | Package cohesion | CL claims traceable to resume bullets, no contradictions | Fix |
 

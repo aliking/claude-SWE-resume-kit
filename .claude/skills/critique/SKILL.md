@@ -1,5 +1,6 @@
 ---
-description: Re-critique existing resume/CV output files against a JD
+name: critique
+description: Re-critique existing resume output files against a JD
 user-invocable: true
 ---
 
@@ -12,7 +13,7 @@ Parse `$ARGUMENTS`:
 - .tex file path(s) + JD source (existing format) → backward compatible
 - Session name (e.g., `acme_engineer`) → find session file via derivation
 
-If no CL .tex provided or found in session file, critique resume/CV alone (Part 7 adjustments noted below).
+If no CL .tex provided or found in session file, critique resume alone (Part 7 adjustments noted below).
 
 ---
 
@@ -66,7 +67,7 @@ Find and read the session file for the .tex being critiqued (use derivation prot
 5. Read the relevant bundle (`resume_builder/bundles/bundle_[role_type].md` — from session file)
 6. Run char count:
    ```bash
-   python3 resume_builder/helpers/char_count.py -f [resume|cv] [file.tex]
+   python3 resume_builder/helpers/char_count.py -f resume [file.tex]
    ```
 7. Compile and visually verify:
    ```bash
@@ -75,7 +76,7 @@ Find and read the session file for the .tex being critiqued (use derivation prot
    Use the Read tool to view the compiled PDF — check orphans, page fill, header wrapping.
    If compile fails: note "COMPILE FAILED — visual checks could not be verified" in Part 8.
 8. If a prior critique exists (`output/<FolderName>/critique_<name>.md`): read it and note previous score.
-8b. **Paper Hook Verification:** If the CL cites named papers, PIs, programs, or publications, web-search to verify title, journal, year, and PI affiliation. Flag factual errors as Tier 1 fixes.
+8b. **External Hook Verification:** If the CL cites named products, initiatives, talks, programs, or publications, web-search to verify the factual details. Flag factual errors as Tier 1 fixes.
 
 9. **Run the full critique per critique_framework.md. The output MUST contain ALL 8 sections** (even if the framework file has partially compacted, produce every section):
 
@@ -84,7 +85,7 @@ Find and read the session file for the .tex being critiqued (use derivation prot
        (e) Gap ranking (fatal/serious/cosmetic) (f) Methodology transfer test (g) Competitive landscape
     2. **Five-Perspective Read-Through** — ATS, Recruiter (10s), HR (30s), HM (2min), Technical (10min) — each with verdict
     3. **Eight-Dimension Scoring** — weighted table summing to 100
-       (ATS 15%, Summary 10%, Skills 10%, Bullets 25%, Publications 10%, Narrative 15%, Visual 5%, Credibility 10%)
+       (ATS 15%, Summary 10%, Skills 10%, Bullets 25%, Evidence 10%, Narrative 15%, Visual 5%, Credibility 10%)
     4. **Interview Likelihood** — per-reader probability + ceiling analysis
     5. **Tiered Improvements** — Tier 1 (>=1pt each), Tier 2 (0.3-0.9), Tier 3 (<0.3)
     6. **Interview Bridge Points** — 5-7 resume-to-interview talking points
@@ -105,6 +106,6 @@ If edits needed, tell user to run `/edit-resume`.
 
 ### When user approves / says "looks good" / finalizes:
 Verify all expected files exist in `output/<FolderName>/`:
-- session file, resume/CV .tex + .pdf, CL .tex + .pdf, critique .md
+- session file, resume .tex + .pdf, CL .tex + .pdf, critique .md
 - Compile artifacts (.aux, .log, .out)
 Confirm to user: "Package complete in output/<FolderName>/ — [list files]"

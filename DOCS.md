@@ -11,36 +11,37 @@ claude-resume-kit/
 ├── CLAUDE.md                          # Auto-loaded project instructions
 ├── config.md                          # Your personal configuration
 ├── .claude/skills/                    # 6 skills (invoked as /skill-name)
-│   ├── setup-extract/SKILL.md         # Extract from papers → structured data
+│   ├── setup-extract/SKILL.md         # Extract from projects and initiatives → structured data
 │   ├── setup-build-kb/SKILL.md        # Synthesize KB from extractions
-│   ├── make-resume/SKILL.md           # JD → tailored resume/CV (.tex)
+│   ├── make-resume/SKILL.md           # JD → tailored resume (.tex)
 │   ├── make-cl/SKILL.md              # Session → cover letter (.tex)
 │   ├── edit-resume/SKILL.md           # Edit from critique/feedback
 │   └── critique/SKILL.md             # Independent quality review
 ├── resume_builder/
 │   ├── reference/                     # Generation rules and protocols
 │   │   ├── shared_ops.md              # Session workflow (all skills read this)
-│   │   ├── resume_reference.md        # Resume/CV formatting rules
+│   │   ├── resume_reference.md        # Resume formatting rules
 │   │   ├── cl_reference.md            # Cover letter rules
 │   │   ├── critical_rules.md          # Compact re-read for generation phase
 │   │   ├── session_file_template.md   # Session file format spec
 │   │   └── critique_framework.md      # 8-part critique system
 │   ├── templates/                     # LaTeX .cls classes + .tex templates
 │   │   ├── resume.cls                 # 2-page resume class
-│   │   ├── cv.cls                     # Multi-page CV class
 │   │   ├── resume_template.tex        # Resume structural template
-│   │   ├── cv_template.tex            # CV structural template
 │   │   └── coverletter_template.tex   # Cover letter template
 │   ├── helpers/
 │   │   └── char_count.py              # Character counting utility for bullets
-│   ├── examples/                      # Fictional "Dr. Jordan Chen" — full worked example
+│   ├── examples/                      # Fictional candidate — full worked example
 │   ├── experience/                    # YOUR experience files (built by /setup-build-kb)
 │   ├── bundles/                       # YOUR role-type bundles (built by /setup-build-kb)
-│   └── support/                       # Skills taxonomy, pub metadata, AI fingerprint rules
+│   └── support/                       # Skills taxonomy, evidence index, AI fingerprint rules
 ├── knowledge_base/
-│   ├── extractions/                   # Paper extractions (built by /setup-extract)
-│   ├── papers/                        # Drop your PDFs / .tex source here
-│   └── notes/                         # Any other reference material
+│   ├── extractions/                   # Work-item extractions (built by /setup-extract)
+│   └── sources/
+│       ├── resume_inputs/             # Existing resume PDFs
+│       ├── performance_reviews/       # Annual/performance review PDFs
+│       ├── supporting_docs/           # Project docs, notes, exports
+│       └── repo_manifests/            # Markdown files listing local repo paths/ranges
 ├── JDs/                               # Job descriptions (text files)
 └── output/                            # Generated .tex files, session files, critiques
 ```
@@ -63,17 +64,40 @@ All 4 generation skills read and update this file. It's the single source of tru
 
 ### Experience Files
 
-One file per position (e.g., `experience_postdoc_university.md`). Each achievement has:
-- **Source paper** with citation
-- **Methods and tools** used
-- **Quantitative results**
+One file per position (e.g., `experience_senior_engineer_company.md`). Each achievement has:
+- **Source work item** with provenance notes
+- **Technical and/or non-technical evidence**
+- **Quantitative or directional results**
 - **Pre-written bullet variants** (2-line and 3-line)
 - **Tags** for which role types this achievement is relevant to
 - **Significance** context for cover letters
 
+### Extraction Source Modes
+
+`/setup-extract` supports four source modes:
+- **resume-pdf mode:** Uses bullet points as claim seeds that must be verified
+- **git-repo mode:** Uses local repository evidence (files, commits, tags, ownership windows)
+- **review-pdf mode:** Uses annual review evidence for impact, scope, and non-technical contributions
+- **mixed mode:** Combines multiple source types for one work item and resolves dedupe via merge/split confirmation
+
+For mixed mode, the workflow is:
+1. Build a candidate map from all sources
+2. Confirm merge/split decisions with the user
+3. Extract one consolidated work item with source evidence, confidence, and confidentiality fields
+
+Confidence labels should be tracked for major claims:
+- **High:** directly supported by repo/review evidence
+- **Medium:** supported by resume bullets or partial evidence
+- **Low:** inferred and requires confirmation
+
+Confidentiality labels should be tracked for external safety:
+- **safe-external**
+- **redact-before-use**
+- **internal-only**
+
 ### Role-Type Bundles
 
-One file per target audience (e.g., `bundle_academic.md`). Each bundle contains:
+One file per target audience (e.g., `bundle_full_stack.md`). Each bundle contains:
 - **S1: Role Profile** — what this audience values, positioning strategy
 - **S2: Summary Guide** — how to write the summary for this role type
 - **S3: Achievement Reframing Map** — priority ranking of your achievements for this audience
@@ -82,11 +106,11 @@ One file per target audience (e.g., `bundle_academic.md`). Each bundle contains:
 
 ### Provenance Flags
 
-The system enforces accuracy through provenance tracking in `config.md`. Every achievement is tagged with its publication status. The skills check this table before every output and will never:
-- Claim unpublished work is published
-- Claim internal tools are peer-reviewed
+The system enforces accuracy through provenance tracking in `config.md`. Every achievement is tagged with its visibility and claim safety. The skills check this table before every output and will never:
+- Claim prototype work is deployed in production
+- Claim internal tools are open source
 - Use full-ownership verbs for shared work
-- Inflate author position
+- Inflate contribution level
 
 ### The Critique System
 
@@ -107,7 +131,7 @@ The `/critique` skill runs a multi-part assessment:
 For best results, use a **separate Claude Code session** for each step. This gives each skill fresh context, which produces better quality (especially for critique — you want fresh eyes, not the same context that generated the resume).
 
 ```
-Session 1:  /make-resume JDs/job.txt     → resume/CV .tex
+Session 1:  /make-resume JDs/job.txt     → resume .tex
             /clear
 Session 2:  /make-cl                      → cover letter .tex
             /clear
@@ -125,11 +149,11 @@ Session 3:  /critique                     → critique .md with score
 | Setting | What it controls | Example |
 |---------|-----------------|---------|
 | **Personal Info** | Name, email, phone, links on all outputs | Your contact details |
-| **Document Preferences** | Page counts, bullet line variants, skills layout | `Resume: 2 pages, CV: 5 pages` |
-| **Provenance Flags** | What claims are safe to make | `ML paper: under review → never say "published"` |
-| **Role Types** | Target audiences and their bundles | `Academic (Tier 1), Industry R&D (Tier 2)` |
-| **Decision Tree** | How JD keywords map to role types | `"tenure-track" → Academic` |
-| **FIXED Sections** | Template sections that never change per JD | `Education, Publications, Awards` |
+| **Document Preferences** | Page counts, bullet variants, skills layout | `Resume: 2 pages` |
+| **Provenance Flags** | What claims are safe to make | `Onboarding initiative: internal recurring program → don't imply company-wide ownership unless true` |
+| **Role Types** | Target audiences and their bundles | `Full Stack (Tier 1), Backend (Tier 2)` |
+| **Decision Tree** | How JD keywords map to role types | `"backend" → Backend Engineer` |
+| **FIXED Sections** | Template sections that never change per JD | `Education, optional Publications, Awards` |
 | **Output Rules** | Package formats and constraints | `Resume: 2pg + 1pg CL = 3pg package` |
 | **KB Corrections** | Errors to never re-introduce | `Spearman is 0.82, not 0.85` |
 
@@ -137,7 +161,7 @@ Session 3:  /critique                     → critique .md with score
 
 - **Fonts, colors, spacing** — modify `.cls` files
 - **Section order** — reorder sections in `.tex` templates
-- **FIXED content** — fill in education, awards, publications, header
+- **FIXED content** — fill in education, awards, optional publications, header
 - **Icons** — replace `GS.png` / `orcid.png` with your own
 - **Page geometry** — adjust margins in `.cls` if needed
 
@@ -148,7 +172,7 @@ Session 3:  /critique                     → critique .md with score
 | **Experience files** | Edit bullet text, add/remove achievements, adjust tags |
 | **Bundles** | Change priority matrices, rewrite summary guides, add role types |
 | **Skills taxonomy** | Add/remove skills, change groupings, adjust bold rules |
-| **Pub metadata** | Update citation counts, add new publications |
+| **Evidence index** | Update project, initiative, and optional external evidence summaries |
 
 ### Reference Docs (advanced)
 
@@ -176,7 +200,7 @@ Each skill is a markdown file in `.claude/skills/<name>/SKILL.md`. You can:
 - **Accuracy > Relevance > Impact > ATS > Brevity** — the priority hierarchy for every generation decision
 - **LaTeX-only output** — Claude generates `.tex`, you compile locally. No formatting surprises.
 - **FLIPPED position format** — the bold line under each position title is a JD-customized theme, not a generic description. This is the strongest tailoring lever.
-- **Structured provenance** — every achievement is tracked from source paper through extraction to experience file to resume bullet
+- **Structured provenance** — every achievement is tracked from source material through extraction to experience file to resume bullet
 - **Character-precise budgets** — every bullet is calibrated to fit the template geometry, not "try to keep it short"
 - **Session files as state** — all decisions for a JD live in one file. Skills can recover from interruptions.
 - **Anti-fabrication by design** — provenance flags, verb discipline, and corrections logs prevent overclaiming even under pressure to impress
@@ -189,17 +213,17 @@ Each skill is a markdown file in `.claude/skills/<name>/SKILL.md`. You can:
 **Q: Do I need to know LaTeX?**
 No. Claude generates the `.tex` files. You just compile them (`pdflatex file.tex`). The templates handle all formatting.
 
-**Q: How many papers should I extract?**
-All papers where you're first author or co-first author, plus key contributing-author papers. Quality matters more than quantity — 5 well-extracted papers beat 20 shallow ones.
+**Q: How many items should I extract?**
+Extract the work items that best represent your strongest technical delivery and your strongest non-technical contributions. Quality matters more than quantity — 8 well-extracted items beat 30 shallow ones.
 
-**Q: Can I use this for non-academic roles?**
-Yes. The framework supports any role type — define them in `config.md`. Industry R&D, consulting, data science, and engineering roles all work. Just create appropriate bundles.
+**Q: Can I tailor this for different software engineering roles?**
+Yes. Define role types in `config.md` (for example full stack, backend, frontend, DX) and map JD keywords in the decision tree.
 
-**Q: What if I don't have a Google Scholar / ORCID?**
-Remove those lines from the templates. The framework adapts to what you have.
+**Q: What if I only have GitHub and LinkedIn links?**
+That is fully supported. Keep only the links that help your target roles.
 
-**Q: How do I update after publishing new papers?**
-Run `/setup-extract` on the new paper, then update your experience file and bundles. Existing session files are not affected.
+**Q: How do I update after a new project or initiative?**
+Run `/setup-extract` on the new source material, then update your experience file and bundles. Existing session files are not affected.
 
 **Q: Can I use this with resume formats other than the included templates?**
 Yes. The `.cls` files define the visual style. You can modify them or write your own. The skills generate content based on the template structure — update the `[GENERATE: ...]` and `[FIXED: ...]` markers in your template.

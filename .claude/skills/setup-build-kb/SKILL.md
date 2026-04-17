@@ -1,4 +1,5 @@
 ---
+name: setup-build-kb
 description: Synthesize completed extractions into the knowledge base files needed for resume generation
 user-invocable: true
 ---
@@ -10,7 +11,7 @@ user-invocable: true
 Parse `$ARGUMENTS`:
 - Empty → full build (all phases)
 - Phase number (e.g., `3`) → resume from that phase
-- "experience" / "bundles" / "skills" / "pubs" / "reframing" / "significance" → run only that component
+- "experience" / "bundles" / "skills" / "evidence" / "reframing" / "significance" → run only that component
 - "status" → show what's built and what's missing
 
 ---
@@ -19,7 +20,7 @@ Parse `$ARGUMENTS`:
 
 1. Read `CLAUDE.md` — check KB Corrections Log
 2. Read `config.md` — load:
-   - Personal Info (positions, institutions, dates)
+   - Personal Info (positions, employers, dates)
    - Role Types table (defines which bundles to create)
    - Provenance Flags (propagate to all KB files)
    - Document Preferences (bullet variant defaults)
@@ -28,7 +29,7 @@ Parse `$ARGUMENTS`:
 
 **Pre-flight check:**
 - If `_INVENTORY.md` is empty or has no entries: "No extractions found. Run `/setup-extract` first." Stop.
-- If fewer than 2 extractions: warn "Only [N] extraction(s) found. KB quality improves with more papers. Continue anyway?"
+- If fewer than 2 extractions: warn "Only [N] extraction(s) found. KB quality improves with more work items. Continue anyway?"
 
 Progress: "Found [N] extractions across [M] positions. Config has [K] role types defined."
 
@@ -36,41 +37,45 @@ Progress: "Found [N] extractions across [M] positions. Config has [K] role types
 
 ## Phase 1: Build Experience Files
 
-**Goal:** Create one experience file per position, containing all achievements organized for resume generation.
+**Goal:** Create one experience file per position, containing both technical and non-technical achievements organized for resume generation.
 
 **Read:** All extraction files listed in `_INVENTORY.md`
 
 **For each position** (from `config.md` or inferred from extraction metadata):
 
-1. Group extractions by the position they belong to (based on dates, institution, or user clarification)
-2. Ask the user to confirm grouping if ambiguous: "I've grouped these papers under [Position]. Correct?"
+1. Group extractions by the position they belong to (based on dates, company, team, or user clarification)
+2. Ask the user to confirm grouping if ambiguous: "I've grouped these items under [Position]. Correct?"
 
 **Experience file format** (`resume_builder/experience/experience_<position_key>.md`):
 
 ```markdown
-# Experience: [Position Title] — [Institution]
+# Experience: [Position Title] — [Company]
 ## [Date Range]
 
 ### Cross-Position Section
-[Brief narrative connecting this position's work to the user's broader trajectory]
+[Brief narrative connecting this position's work to the user's broader career]
 [CL framing content — how this position fits the career arc]
 
 ---
 
 ### Achievement [ID]: [Short Title]
 **Source:** [extraction filename]
-**Paper:** [citation or "internal"/"unpublished"]
-**User's role:** [first author / contributing / sole developer]
-**Status:** [published / under review / draft / internal]
+**Type:** [technical-project | internal-tool | leadership-initiative | culture-program | hiring/onboarding | process-improvement | mixed]
+**Work item:** [project name, initiative name, or "internal program"]
+**User's role:** [lead developer / key contributor / mentor / organizer / interviewer / program owner]
+**Status:** [deployed / internal / open source / prototype | recurring initiative]
 
 **Context:** [1-2 sentences — what problem, why it matters]
 
+**Impact area:** [product | reliability | team effectiveness | hiring | onboarding | culture | customer experience | cross-functional execution]
+
 **Bullet variants:**
 - **2L:** [Full 2-line bullet text — STAR format, ~180-210 rendered characters]
-- **3L:** [Full 3-line bullet text — for CV use, ~270-310 rendered characters]
+- **3L:** [Full 3-line bullet text — for long-form variants, ~270-310 rendered characters]
 - **1L:** [Condensed 1-line version — ~90-110 rendered characters, for tight budgets]
 
 **Key skills:** [comma-separated list of skills this achievement demonstrates]
+**Core competencies:** [ownership, mentoring, recruiting, stakeholder management, process design, operational excellence, etc.]
 **ATS keywords:** [domain-specific terms an ATS might scan for]
 **Reframing notes:** [how to emphasize different aspects for different role types]
 
@@ -80,16 +85,16 @@ Progress: "Found [N] extractions across [M] positions. Config has [K] role types
 
 ### >>>>>> MANDATORY STOP — DO NOT PROCEED <<<<<<
 Present the experience file(s) — show achievement count per position, total bullet variants.
-Ask user to review: "Are the groupings correct? Any achievements missing or misattributed?"
+Ask user to review: "Are the groupings correct? Any achievements or non-technical contributions missing or misattributed?"
 **You MUST wait for the user's explicit text response before continuing.**
 
 ---
 
 ## Phase 2: Build Skills Taxonomy
 
-**Goal:** Create a categorized inventory of all technical skills from extractions.
+**Goal:** Create a categorized inventory of both technical skills and non-technical differentiators from extractions.
 
-**Read:** All extraction files (Methods & Tools sections) + experience files from Phase 1
+**Read:** All extraction files (Technical Surface + Non-Technical Surface sections) + experience files from Phase 1
 
 **Build** `resume_builder/support/skills_taxonomy.md`:
 
@@ -98,63 +103,66 @@ Ask user to review: "Are the groupings correct? Any achievements missing or misa
 
 ## Summary Stats
 - Total unique skills: [N]
-- Publications: [N] ([breakdown by status])
-- Top methods: [ranked list]
+- Total non-technical signals: [N]
+- Top themes: [ranked list]
 
 ## Categories
 
-### [Category 1: e.g., Computational Methods]
+### [Category 1: e.g., Languages & Frameworks]
 | Skill | Proficiency | Evidence | Resume Weight |
 |-------|-----------|----------|---------------|
-| [skill] | [expert/proficient/familiar] | [paper IDs] | [HIGH/MED/LOW] |
+| [skill] | [expert/proficient/familiar] | [achievement IDs or extraction files] | [HIGH/MED/LOW] |
 
-### [Category 2: e.g., Programming & Software]
+### [Category 2: e.g., Cloud, Data & Operations]
 [same table format]
 
-### [Category 3: e.g., Machine Learning]
+### [Category 3: e.g., Leadership, Mentorship & Collaboration]
+[same table format]
+
+### [Category 4: e.g., Hiring, Onboarding & Culture]
 [same table format]
 
 [Continue for all categories — typically 4-7 categories]
 ```
 
 **Proficiency levels:**
-- **Expert:** Multiple first-author papers, developed custom tools
-- **Proficient:** Used extensively in published work, comfortable teaching
-- **Familiar:** Used in one project, or contributed to someone else's implementation
+- **Expert:** Repeatedly owned and delivered independently; can set direction or teach others
+- **Proficient:** Used effectively across multiple projects or initiatives; can operate without supervision
+- **Familiar:** Used in a limited scope, or contributed under guidance
 
 Progress: "Built taxonomy — [N] skills across [M] categories"
 
 ---
 
-## Phase 3: Build Publication Metadata
+## Phase 3: Build Evidence Index
 
-**Goal:** Structured pub data for resume/CV generation.
+**Goal:** Structured evidence data for resume generation, including technical, leadership, and culture contributions.
 
-**Build** `resume_builder/support/pub_metadata.md`:
+**Build** `resume_builder/support/evidence_index.md`:
 
 ```markdown
-# Publication Metadata
+# Evidence Index
 
 ## Summary
-- Total publications: [N]
-- First-author: [N] | Co-first: [N] | Contributing: [N]
-- Published: [N] | Under review: [N] | In preparation: [N]
+- Total work items: [N]
+- Technical projects: [N] | Internal tools: [N] | Leadership/culture/process items: [N]
+- Deployed: [N] | Internal: [N] | Open source: [N] | Recurring initiatives: [N]
 
-## Publication List
+## Evidence List
 
-### First-Author / Co-First
-| # | Citation (et al. format) | Journal | Year | Status | Key Topic |
-|---|-------------------------|---------|------|--------|-----------|
-| 1 | [Author et al., Journal, Year] | [journal] | [year] | [status] | [topic] |
+### Core Delivery Work
+| # | Work Item | Type | Position | Status | Primary Theme |
+|---|-----------|------|----------|--------|---------------|
+| 1 | [project/initiative] | [type] | [position] | [status] | [theme] |
 
-### Contributing Author
+### Leadership, Mentorship & Culture
 [same table format]
 
-### Under Review / In Preparation
-[same table format, with provenance notes]
+### External or Optional Evidence
+[same table format, with provenance notes for open source, talks, publications, or certifications when applicable]
 ```
 
-Progress: "Pub metadata — [N] first-author, [M] contributing, [K] under review"
+Progress: "Evidence index — [N] technical items, [M] leadership/culture items, [K] external items"
 
 ---
 
@@ -185,7 +193,7 @@ The role-type table shows how to emphasize/de-emphasize for each target audience
 | [role 3] | LOW | -- | [omit or condense] |
 
 **Overclaiming warning:** [if applicable — e.g., "Do not claim sole credit for experimental results"]
-**First-pass checklist:** [ ] Verb matches author role [ ] Numbers from paper [ ] Status matches provenance
+**First-pass checklist:** [ ] Verb matches contribution role [ ] Numbers or outcomes trace to source [ ] Status matches provenance
 
 ---
 [Repeat for each achievement]
@@ -202,7 +210,7 @@ Ask user: "Does this priority mapping look right for your target roles?"
 
 **Goal:** One bundle per role type from `config.md`, with 5 sections each.
 
-**Read:** Experience files + Skills Taxonomy + Reframing Guide + `config.md` Role Types
+**Read:** Experience files + Skills Taxonomy + Reframing Guide + Evidence Index + `config.md` Role Types
 
 **For each role type**, create `resume_builder/bundles/bundle_<role_type>.md`:
 
@@ -240,23 +248,23 @@ Ask user: "Does this priority mapping look right for your target roles?"
 [For each HIGH/MEDIUM achievement: which angle to use, which metrics to lead with]
 
 | ID | Default Framing | This Role's Framing | Key Metric |
-|----|----------------|--------------------|-----------| 
+|----|----------------|--------------------|-----------|
 | [ID] | [generic] | [role-specific angle] | [number to highlight] |
 
 ---
 
 ## S4: Skills Guide
 
-**Bold tools (resume):** [3-5 tools to bold in Technical Skills for this role type]
-**Must-include skills:** [skills that MUST appear for ATS match]
-**Nice-to-have:** [skills to include if budget allows]
-**Omit:** [skills irrelevant to this audience]
+**Bold tools (resume):** [3-5 tools to bold in Skills for this role type]
+**Must-include skills:** [skills and capabilities that MUST appear for ATS match]
+**Nice-to-have:** [skills or leadership signals to include if budget allows]
+**Omit:** [skills or culture items irrelevant to this audience]
 
 ---
 
 ## S5: Cover Letter Guide
 
-**Institution type:** [Industry / National Lab / Academic]
+**Institution type:** [Product/Startup / Enterprise/Platform / Mission-driven]
 **Opening hook pattern:** [template for first paragraph opener]
 **Key narrative thread:** [what story to tell across paragraphs]
 **"Why them" angle:** [what to research about target employer]
@@ -308,7 +316,7 @@ After all phases complete (or after the requested subset), present:
 |-----------|------|--------|-------|
 | Experience files | `experience/*.md` | [DONE/MISSING] | [N achievements] |
 | Skills taxonomy | `support/skills_taxonomy.md` | [DONE/MISSING] | [N skills] |
-| Pub metadata | `support/pub_metadata.md` | [DONE/MISSING] | [N pubs] |
+| Evidence index | `support/evidence_index.md` | [DONE/MISSING] | [N items] |
 | Reframing guide | `support/achievement_reframing_guide.md` | [DONE/MISSING] | [N entries] |
 | Bundles | `bundles/bundle_*.md` | [DONE/MISSING] | [N bundles] |
 | Significance | `support/significance_*.md` | [DONE/MISSING] | [N files] |
@@ -317,7 +325,7 @@ After all phases complete (or after the requested subset), present:
 - [ ] At least 1 experience file with 5+ achievements
 - [ ] Skills taxonomy with 20+ skills
 - [ ] At least 1 bundle matching a target role type
-- [ ] Pub metadata complete
+- [ ] Evidence index complete
 - [ ] Reframing guide covers all achievements
 - [ ] Significance files for cover letter depth
 

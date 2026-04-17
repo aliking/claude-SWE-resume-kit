@@ -1,5 +1,6 @@
 ---
-description: Generate a tailored cover letter from an existing session file and finished resume/CV
+name: make-cl
+description: Generate a tailored cover letter from an existing session file and finished resume
 user-invocable: true
 ---
 
@@ -56,7 +57,7 @@ Then:
 
 Read in this order:
 1. **Session file** — specifically: Company Context, Cover Letter Plan, Framing Strategy, ATS Keywords
-2. **Finished resume/CV .tex** — path from session file Output Files. Read to understand what CL must complement.
+2. **Finished resume .tex** — path from session file Output Files. Read to understand what CL must complement.
 3. `resume_builder/reference/cl_reference.md` — CL format rules, paragraph templates, anti-patterns
 4. `resume_builder/support/ai_fingerprint_rules.md` — Banned words, structural rules (CLs are most vulnerable)
 5. The matching bundle from session file role type → `resume_builder/bundles/bundle_[role_type].md` — Section 5 (Cover Letter)
@@ -73,14 +74,14 @@ Progress: "Loading CL context — [company], [role type] bundle, [institution ty
 Read `resume_builder/templates/coverletter_template.tex`.
 
 **Detect institution type** from session file Cover Letter Plan:
-- Industry → 3 paragraphs, 250-300 words
-- National Lab → 4 paragraphs, 350-450 words
-- Academic → 4 paragraphs, 350-450 words (postdoc) or 450-650 words (faculty)
+- Product/Startup → 3 paragraphs, 250-320 words
+- Enterprise/Platform → 3-4 paragraphs, 300-420 words
+- Mission-driven/Public sector → 4 paragraphs, 320-450 words
 
 **Generate CL following cl_reference.md paragraph structure:**
 - Use significance files for field-context depth (NOT resume bullet text)
 - Use session file CL hooks and "why them" angle
-- Ensure every major claim is traceable to a resume/CV bullet
+- Ensure every major claim is traceable to a resume bullet
 - Open with a specific reference to their work — no generic openers
 - Weave credentials into body paragraphs, not closing
 
@@ -91,9 +92,9 @@ Progress: "Writing [institution type] cover letter — [N] paragraphs, targeting
 ### CL Hook Verification Gate (MANDATORY before presenting to user)
 
 Web-search every hook used in the CL:
-- Academic: PI name + cited paper/research area
-- National Lab: named program, thrust area, or group publication
-- Industry: product, technology, or company news referenced
+- Company product, platform, or published engineering material
+- Company/team mission statements and hiring pages
+- Recent company news relevant to the target role
 
 Present evidence as:
 > **Claim:** [what the CL says] → **Evidence:** [what the search found] → **Source:** [URL]
@@ -114,8 +115,8 @@ Use Read tool to view compiled PDF. Verify:
 
 | Gate | Check | If FAIL |
 |------|-------|---------|
-| Word count | Industry 250-300, Lab/Academic 350-450 | Trim/expand |
-| Page count | Resume package: 1 page. CV package: 1-2 pages | Adjust content |
+| Word count | Product/Startup 250-320, Enterprise/Platform 300-420, Mission-driven/Public sector 320-450 | Trim/expand |
+| Page count | Resume package: 1 page | Adjust content |
 | Page fill | 1pg: well-filled. 2pg: page 2 >= half filled before signature | Adjust |
 | Anti-patterns | No generic opener, no defensive framing, no credential dump | Rewrite |
 | Package cohesion | CL claims traceable to resume bullets, no contradictions | Fix |

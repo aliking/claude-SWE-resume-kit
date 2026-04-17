@@ -1,5 +1,6 @@
 ---
-description: Generate a tailored resume/CV from a JD
+name: make-resume
+description: Generate a tailored resume from a JD
 user-invocable: true
 ---
 
@@ -23,7 +24,7 @@ Parse `$ARGUMENTS`:
 Read `config.md` Provenance Flags before generating any content. Verify every claim against that table.
 
 - Use the email from `config.md` Personal Info in all outputs
-- Resume bullets: ALL variable bullets are 2L (CV: 2L/3L mix OK, check `config.md` Document Preferences)
+- Resume bullets: ALL variable bullets are 2L (unless the user explicitly requests a longer variant)
 - Source ALL bullet content from `resume_builder/experience/` files. Never fabricate.
 - Run `python3 resume_builder/helpers/char_count.py` after each section — the tool is authoritative
 
@@ -64,7 +65,7 @@ Trigger: `$ARGUMENTS` starts with "Quick:"
 Defaults:
 - Select all HIGH priority achievements from bundle's Priority Matrix as 2L
 - Fill remaining budget with MEDIUM priority in Priority Matrix order
-- Default format: 2-page resume (unless JD clearly requires CV)
+- Default format: 2-page resume
 - Skip Phase 0 STOP and Phase 1 STOP
 - Keep Budget Gate (auto-pass if within target) and end-of-resume STOP
 - Run all phases with progress commentary instead of interactive stops
@@ -126,7 +127,7 @@ Proceeding without confirmation misaligns the entire resume and requires full re
 2. All experience files from `resume_builder/experience/`
 3. `resume_builder/support/achievement_reframing_guide.md`
 4. `resume_builder/support/skills_taxonomy.md`
-5. `resume_builder/support/pub_metadata.md`
+5. `resume_builder/support/evidence_index.md`
 
 **Present one table per position:**
 
@@ -146,7 +147,6 @@ Proceeding without confirmation misaligns the entire resume and requires full re
 - Remaining budget slots and what could fill them
 - Forced exclusions per provenance flags
 - Focus directive impact (what changed vs Priority Matrix defaults)
-- CV: confirm first bullet of first experience is 2L (page 1 rule)
 
 **Update session file** — write Bullet Plan tables. Status: `Phase 1: DONE (N bullets confirmed)`
 
@@ -177,7 +177,7 @@ If you proceed without confirmation, you will generate bullets the user didn't a
 2. `resume_builder/reference/critical_rules.md` — Character Limits, Bold Width Penalty, Orphan rules
 3. `resume_builder/support/ai_fingerprint_rules.md` — Banned words, structural rules, post-gen checklist
 
-**Read template:** `resume_builder/templates/resume_template.tex` or `cv_template.tex` + `.cls`
+**Read template:** `resume_builder/templates/resume_template.tex` + `.cls`
 FIXED sections (from `config.md` FIXED Sections) are template-locked — only generate VARIABLE sections (Summary, Skills, Experience bullets/headers).
 
 **Read section specs:** `resume_builder/reference/resume_reference.md` — Section-by-Section Specs for your format
@@ -185,14 +185,14 @@ FIXED sections (from `config.md` FIXED Sections) are template-locked — only ge
 **Generate section by section** (follow Section-by-Section Specs):
 1. Summary → check against session framing strategy
    - Update Status → `Phase 2: Summary DONE`
-2. Technical Skills
+2. Skills
    - Update Status → `Phase 2: Skills DONE`
 3. Each position's bullets → **CHAR COUNT GATE after each position**
    - Position titles: bold theme + date must fit ONE line (see resume_reference.md). If wrapping, shorten title.
    - After each position: Update Status → `Phase 2: [Position] DONE`
 4. **PAGE FILL GATE after all experience**
 
-Save .tex to `output/<FolderName>/e2e_<name>_resume.tex` or `_cv.tex`
+Save .tex to `output/<FolderName>/e2e_<name>_resume.tex`
 
 **Update session file** — add Output Files.
 
@@ -200,12 +200,12 @@ Progress: "Writing Position 1 bullets (6 of 7)..." / "Bullet 4 is SHORT at 184 c
 
 ### CHAR COUNT GATE (per position)
 ```bash
-python3 resume_builder/helpers/char_count.py -f [resume|cv] output/<FolderName>/[file].tex
+python3 resume_builder/helpers/char_count.py -f resume output/<FolderName>/[file].tex
 ```
 No OVER violations. Last line of 2L bullets >= 70% fill. **Fix before next position.**
 
 ### PAGE FILL GATE
-Resume: <= 3 lines white space on last page. CV: check rendered line target from resume_reference.md. **If FAIL: add/trim variable bullets.**
+Resume: <= 3 lines white space on last page. **If FAIL: add/trim variable bullets.**
 
 ### COMPILE GATE
 ```bash
