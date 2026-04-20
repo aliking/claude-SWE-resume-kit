@@ -12,8 +12,7 @@
 - **Phone:** [+1 XXXXXXXXXX]
 - **Location:** [City, State ZIP]
 - **LinkedIn:** [URL or leave blank]
-- **Google Scholar:** [URL or leave blank]
-- **ORCID:** [URL or leave blank]
+- **GitHub:** [URL or leave blank]
 - **Website:** [URL or leave blank]
 
 ---
@@ -21,11 +20,8 @@
 ## Document Preferences
 
 - **Resume pages:** 2
-- **CV pages:** 5
 - **Resume bullet variant:** 2L (all variable bullets are 2-line)
-- **CV bullet variant:** 2L/3L mix
 - **Skills config (resume):** 4-3-2-2-2 (13 lines, 5 groups)
-- **Skills config (CV):** 4-4-3-3-3 (17 lines, 5 groups)
 - **Immigration line:** Yes | "Authorized to work in the United States"
 
 ---
@@ -82,10 +78,9 @@ List template sections that should NEVER be modified during generation.
 These are copied verbatim from your template every time.
 
 - Education
-- Publications (CV)
+- Publications (if applicable)
 - Honors & Awards
 - Header block (name, contact, links)
-- _[Add any other fixed sections]_
 
 ---
 
@@ -93,5 +88,4 @@ These are copied verbatim from your template every time.
 
 - **Email in all outputs:** [same as Personal Info email]
 - **Resume package:** [N] pages + 1-page cover letter
-- **CV package:** [N] pages + 1-2 page cover letter
 - **Output .tex files ONLY** — user compiles locally
