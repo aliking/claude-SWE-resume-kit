@@ -154,11 +154,13 @@ For each NEW/CHANGED source approved by user:
 Avoid reprocessing previously captured windows.
 
 Required inputs for github mode:
-1. scope: --org <org_name> OR one/more --repo owner/repo
-2. target login: GITHUB_TARGET value
+1. target login: GITHUB_TARGET value
+2. scope (optional): --org <org_name> OR one/more --repo owner/repo
+   - if scope is omitted, exporter defaults to all public repos owned by target user
 3. prior export path (preferred) for deriving start-date
 
-If any required input is missing, ask for it before generating commands.
+If target login is missing, ask for it before generating commands.
+Ask for scope only when user intent does not clearly indicate org/repo/public mode.
 
 Preferred evidence keys (in order):
 1. PR number + repo full_name
@@ -167,9 +169,12 @@ Preferred evidence keys (in order):
 4. Export generated_at + scope metadata as fallback
 
 Use exporter start-date filtering for incremental pulls:
-- GITHUB_TOKEN=<token> GITHUB_TARGET=<target_login> node scripts/export_github_contributions.js --org <org_name> --start-date <ISO-8601>
-- or for selected repositories:
+- org scope:
+	GITHUB_TOKEN=<token> GITHUB_TARGET=<target_login> node scripts/export_github_contributions.js --org <org_name> --start-date <ISO-8601>
+- selected repositories scope:
 	GITHUB_TOKEN=<token> GITHUB_TARGET=<target_login> node scripts/export_github_contributions.js --repo owner/repo --start-date <ISO-8601>
+- target-public-repos scope (default when no scope flag is provided):
+	GITHUB_TOKEN=<token> GITHUB_TARGET=<target_login> node scripts/export_github_contributions.js --start-date <ISO-8601>
 - set <ISO-8601> from last captured watermark per scope
 - helper to derive start date from prior export generated_at:
 	node scripts/derive_export_start_date.js --input <prior_export.json> --overlap-days 7 --quiet

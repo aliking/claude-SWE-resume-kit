@@ -48,6 +48,12 @@ Before deep extraction:
 - Source evidence (`resume_pdf` bullets, `repo` path/range, `review_pdf` section)
 - Confidence preview (`high`/`medium`/`low`)
 
+**Additional requirement for `github-contributions-export mode`:**
+- Include a triage column for each repo: `extract`, `corroborate-existing`, or `ignore`
+- Include a one-line reason per repo (ownership signal, impact signal, or low-signal reason)
+- Call out likely low-value repos early (e.g., one-off forks, pure learning experiments) so the user can quickly confirm exclusions
+- Explicitly ask whether each `ignore` repo should be permanently skipped for resume use or only skipped for now
+
 ### >>>>>> MANDATORY STOP — DO NOT PROCEED <<<<<<
 Present candidate map and ask:
 1. Which candidates should be merged as one work item?
@@ -107,12 +113,29 @@ Read the source using the appropriate method:
    - Multiple small improvement commits can indicate careful maintenance rather than low impact
    - Test-file and automation-file changes can indicate quality ownership, release stewardship, or developer enablement
 
+6. **Resume relevance triage signals (new):**
+   - **Likely extract:** sustained contribution pattern, clear ownership after fork, non-trivial maintenance/release work, or meaningful culture/process/tooling impact
+   - **Likely corroborate-existing:** repo clearly supports an already-extracted work item and does not add enough independent scope for a standalone extraction
+   - **Likely ignore:** one-off fork with minimal changes, explicit learning sandbox with no outcome signal, toy/demo repo with no production or organizational impact evidence
+   - User clarification can promote or demote any repo regardless of commit count
+
 **Do not overclaim from GitHub export evidence:**
 - Repo primary language is context, not direct proof of user proficiency level
 - PR file-extension summaries are better evidence than repo language mix, but still suggest touch surface rather than proficiency level by themselves
 - Being first contributor after fork suggests ownership/initiative, not sole authorship of the whole repo
 - Commit count alone does not equal impact; prefer patterns, scope, and rationale from PR text
 - Public/private visibility does not imply production use or external adoption
+
+**When the source is a personal-account export with many forks:**
+- Default stance: treat most forks as `ignore` unless there is clear evidence of sustained ownership or outcome
+- Prefer extracting repos that show maintainer behavior (compatibility fixes, release/version commits, docs follow-through, merged patches)
+- If a repo is culture/recruiting oriented, keep it as low-salience `color` evidence unless the user indicates strategic importance
+- If user gives explicit adoption metrics (e.g., package downloads), record them as user-provided unless independently corroborated
+
+**Cross-linking requirement:**
+- For every extracted repo, explicitly check whether it should instead strengthen an existing extraction
+- If it strengthens an existing extraction, note that in the candidate map and inventory update as `corroborate-existing`
+- If extracted as standalone, include one sentence under Distinguishing Signals explaining why it was not merged into an existing item
 
 Progress: "Reading work item... [title], [evidence type], [year or period]"
 

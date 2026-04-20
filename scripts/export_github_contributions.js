@@ -2,9 +2,10 @@
 /**
  * GitHub Contributions Exporter
  *
- * Finds all contributions made by a TARGET user within either:
- *   1) a GitHub organization, or
- *   2) one or more specific repositories.
+ * Finds all contributions made by a TARGET user within one of these scopes:
+ *   1) a GitHub organization (--org),
+ *   2) one or more specific repositories (--repo), or
+ *   3) all public repositories owned by the target user (default when scope is omitted).
  *
  * Writes JSON output suitable for resume knowledge-base extraction.
  *
@@ -33,6 +34,9 @@
  *   Scan multiple specific repos:
  *     GITHUB_TOKEN=ghp_xxx GITHUB_TARGET=their-login node export_github_contributions.js --repo owner/repo1 --repo owner/repo2
  *
+ *   Scan all public repos owned by target user (default scope):
+ *     GITHUB_TOKEN=ghp_xxx GITHUB_TARGET=their-login node export_github_contributions.js
+ *
  *   Test mode (stop after the first repo with contributions):
  *     GITHUB_TOKEN=ghp_xxx GITHUB_TARGET=their-login node export_github_contributions.js --org <org_name> --test
 
@@ -42,7 +46,7 @@
  *   Custom output file name:
  *     GITHUB_TOKEN=ghp_xxx GITHUB_TARGET=their-login node export_github_contributions.js --org <org_name> --output my_output
  *
- *   Either --org <org_name> or one/more --repo owner/repo values is required.
+ *   If no --org/--repo scope is provided, target-owned public repos are scanned.
  *
  * ─── OUTPUTS ─────────────────────────────────────────────────────────────────
  *
@@ -339,6 +343,14 @@ async function getOrgRepos(token, org) {
   const repos = await paginate(token, `${GITHUB_API}/orgs/${org}/repos`, { type: "all", sort: "updated" });
   process.stderr.write(`  Found ${repos.length} repos.\n`);
   return repos;
+}
+
+async function getTargetUserPublicRepos(token, username) {
+  process.stderr.write(`  Listing public repos owned by '${username}' …\n`);
+  const repos = await paginate(token, `${GITHUB_API}/users/${username}/repos`, { type: "owner", sort: "updated" });
+  const publicOwned = repos.filter((repo) => repo.owner?.login?.toLowerCase() === username.toLowerCase() && repo.private !== true);
+  process.stderr.write(`  Found ${publicOwned.length} public repos owned by ${username}.\n`);
+  return publicOwned;
 }
 
 function parseRepoTarget(value) {
@@ -885,16 +897,6 @@ async function main() {
     );
     process.exit(1);
   }
-  if (!org && repoTargets.length === 0) {
-    process.stderr.write(
-      "ERROR: Provide either an organization name or --repo owner/repo.\n" +
-      "       Examples:\n" +
-      "       node export_github_contributions.js --org animoto\n" +
-      "       node export_github_contributions.js --repo owner/repo\n"
-    );
-    process.exit(1);
-  }
-
   const parsedStartDate = parseStartDate(startDate);
   if (startDate && !parsedStartDate) {
     process.stderr.write(
@@ -904,7 +906,7 @@ async function main() {
     process.exit(1);
   }
 
-  const outputBase = outputArg ?? (org ? `${org}_contributions` : "repo_contributions");
+  const outputBase = outputArg ?? (org ? `${org}_contributions` : (repoTargets.length > 0 ? "repo_contributions" : `${target}_public_contributions`));
 
   // Verify token
   process.stderr.write(`Verifying token …\n`);
@@ -933,7 +935,7 @@ async function main() {
       process.exit(1);
     }
     scopeLabel = "selected_repos";
-  } else {
+  } else if (org) {
     process.stderr.write(`Scanning org: ${org}\n`);
     reposToScan = await getOrgRepos(token, org);
     if (!reposToScan || reposToScan.length === 0) {
@@ -944,6 +946,17 @@ async function main() {
       process.exit(1);
     }
     scopeLabel = org;
+  } else {
+    process.stderr.write(`No --org/--repo provided. Falling back to target-owned public repos.\n`);
+    reposToScan = await getTargetUserPublicRepos(token, target);
+    if (!reposToScan || reposToScan.length === 0) {
+      process.stderr.write(
+        `ERROR: No public repos found for target user '${target}'.\n` +
+        "       Provide --org or --repo if you intended a different scope.\n"
+      );
+      process.exit(1);
+    }
+    scopeLabel = `${target}_public_repos`;
   }
 
   process.stderr.write(`\nCollecting contributions across ${reposToScan.length} repos …\n\n`);
