@@ -30,12 +30,19 @@ __pycache__/
 # Build planning (not shipped)
 .planning/
 
-# Knowledge base sources and extractions (keep folder structure, ignore generated content)
-knowledge_base/**/*
+# Personal/local config
+/config.md
 
-# JDs except the example
-JDs/*.txt
-!example_jd.txt
+# Knowledge base: ignore data, keep folder structure and explicit templates/examples
+/knowledge_base/**
+!/knowledge_base/
+!/knowledge_base/**/
+!/knowledge_base/**/.gitkeep
+!/knowledge_base/extractions/_INVENTORY.template.md
+
+# JDs: ignore everything, keep only example JD
+/JDs/*
+!/JDs/example_jd.txt
 
 # Session-specific (users may want to keep these — uncomment to ignore)
 # output/

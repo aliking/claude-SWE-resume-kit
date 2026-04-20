@@ -1,6 +1,6 @@
 # Configuration
 
-> Edit this file with your personal details. Every skill reads this file.
+> Edit this file with your personal details and rename to `config.md`. Every skill reads this file.
 
 ---
 

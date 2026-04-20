@@ -8,6 +8,8 @@
 
 ```
 .claude/skills/
+├── getting-started/SKILL.md     # Guided first-time setup: config/inventory/source intake + GitHub export
+├── setup-update/SKILL.md        # Incremental updates: detect deltas, avoid duplicates, selective rebuilds
 ├── setup-extract/SKILL.md       # Extract from projects, initiatives, and files into structured extractions
 ├── setup-build-kb/SKILL.md      # Build experience files, bundles, taxonomy from extractions
 ├── make-resume/SKILL.md         # Phase 0-2: JD research → bullet plan → resume generation

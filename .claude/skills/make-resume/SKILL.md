@@ -45,6 +45,9 @@ If the user provides feedback, corrections, or suggestions at any point:
 
 Read `resume_builder/reference/shared_ops.md` for session startup, file derivation, and organization protocols.
 
+**Pre-flight check:**
+- If `config.md` does not exist: "You need to create a config.md with your personal info and provenance flags before generating a resume. See `_config.md`" Stop.
+
 Then:
 1. Read `CLAUDE.md` — check Active Sessions and KB Corrections
 2. Read `config.md` — load Provenance Flags, email, document preferences, role types

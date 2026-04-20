@@ -16,6 +16,7 @@ Parse `$ARGUMENTS`:
 ### Source Modes (auto-detect from input paths)
 - **resume-pdf mode:** Resume PDF files with bullet points (claim seeds)
 - **git-repo mode:** Local repository paths (contribution evidence)
+- **github-contributions-export mode:** Exported `.json` contribution summaries from the GitHub exporter script
 - **review-pdf mode:** Annual/performance review PDFs (impact and non-technical evidence)
 - **mixed mode:** Multiple source types for one work item (recommended for strongest provenance)
 
@@ -25,7 +26,8 @@ Parse `$ARGUMENTS`:
 
 1. Read `CLAUDE.md` — check KB Corrections Log for known issues
 2. Read `config.md` — load Personal Info (to identify user's role), Provenance Flags
-3. Read `knowledge_base/extractions/_INVENTORY.md` — see what's already extracted, avoid duplicates
+3. If `knowledge_base/extractions/_INVENTORY.md` does not exist, copy `_INVENTORY.template.md` to create it
+4. Read `knowledge_base/extractions/_INVENTORY.md` — see what's already extracted, avoid duplicates
 
 If the work item is already in the inventory:
 - Show the existing extraction path
@@ -62,6 +64,7 @@ Read the source using the appropriate method:
 - **PDF reports:** Use the Read tool
 - **Resume PDFs:** Treat bullets as claim leads, not ground truth. Extract action/result pairs and mark for verification.
 - **Code repositories:** Summarize key files, README, commit history, release tags, and module ownership. Identify likely contribution windows and high-impact commits.
+- **GitHub contributions exports:** Treat each contributed repo as a candidate work item or supporting evidence file. Use repo metadata only as contextual evidence, not as proof of specific code authorship. Use PRs, commit history, PR comments, and issue comments as the main evidence for the user's role, ownership, communication, and iteration pattern.
 - **Annual review PDFs:** Treat as high-value evidence for impact, scope, leadership, mentoring, and process outcomes.
 - **Notes or performance-review style docs:** Treat them as evidence for non-technical contributions such as mentoring, hiring, onboarding, process, documentation, or company culture work.
 - **If multiple sources exist:** Combine information from all
@@ -77,6 +80,39 @@ Read the source using the appropriate method:
 8. Business, team, or organizational impact
 9. Evidence provenance per claim: source type, source location, and confidence
 10. Confidentiality constraints: safe external vs internal-only details
+
+**For GitHub contributions exports, explicitly evaluate these signals:**
+1. **Ownership / initiation signals:**
+   - Target user is the first contributor in the repo
+   - Target user is the first contributor after fork
+   - First authored PR establishes the repo's new direction or operating model
+   - Repo shows mostly or only target-user contribution records in the export
+2. **Contribution intensity signals:**
+   - Multiple commits and PRs in a short window
+   - Follow-up commits after initial PR open/merge
+   - Separate maintenance/doc/CI updates after the initial feature commit
+   - Repeated return to the repo over time rather than one isolated change
+   - PR change-shape summaries: new vs updated files, deleted/renamed files, and total changed files
+3. **Communication / collaboration signals:**
+   - PR descriptions explain tradeoffs, constraints, rationale, or rollout choices
+   - PR comments or issue comments show review quality, coordination, or mentorship
+   - README / documentation commits show enablement and communication work
+4. **Technical-context signals:**
+   - Repo language breakdown suggests the technical surface area, but does NOT prove the language of the user's exact changes
+   - PR file-extension breakdown is stronger evidence of what file types the user directly touched than repo-level language mix
+   - Repo description and topics help infer domain and likely business context
+   - Workflow / CI / release-related commit messages suggest operational responsibility
+5. **Quality / judgment signals:**
+   - Commit messages indicate cleanup, iteration, naming fixes, workflow tuning, or follow-through after initial delivery
+   - Multiple small improvement commits can indicate careful maintenance rather than low impact
+   - Test-file and automation-file changes can indicate quality ownership, release stewardship, or developer enablement
+
+**Do not overclaim from GitHub export evidence:**
+- Repo primary language is context, not direct proof of user proficiency level
+- PR file-extension summaries are better evidence than repo language mix, but still suggest touch surface rather than proficiency level by themselves
+- Being first contributor after fork suggests ownership/initiative, not sole authorship of the whole repo
+- Commit count alone does not equal impact; prefer patterns, scope, and rationale from PR text
+- Public/private visibility does not imply production use or external adoption
 
 Progress: "Reading work item... [title], [evidence type], [year or period]"
 
@@ -138,6 +174,7 @@ Create the extraction file at `knowledge_base/extractions/<WorkItemKey><Year><2-
 - **Databases:** [e.g., PostgreSQL, MongoDB]
 - **Infrastructure:** [e.g., AWS, Docker, Kubernetes]
 - **Key tools:** [specific tools or methodologies used, or "N/A"]
+- **Repo-context vs user-authorship note:** [separate what the repo suggests about stack/domain from what the evidence directly proves the user changed]
 
 ## Non-Technical Surface
 - **Leadership/Mentorship:** [mentoring, coaching, onboarding, technical leadership, or "N/A"]
@@ -154,6 +191,7 @@ Create the extraction file at `knowledge_base/extractions/<WorkItemKey><Year><2-
 ## Distinguishing Signals
 - [What stands out about this work item and why it matters on a resume]
 - [Optional: especially strong technical, leadership, ownership, or collaboration angle]
+- [If GitHub export evidence exists: note ownership, iteration intensity, communication quality, or maintainer-style follow-through]
 
 ## Collaboration & Scope
 - **Stakeholders/Partner teams:** [engineering, product, recruiting, design, support, leadership, etc.]
@@ -165,6 +203,7 @@ Create the extraction file at `knowledge_base/extractions/<WorkItemKey><Year><2-
 - **Safe to claim:** [what the user can put on a resume without hedging]
 - **Needs hedging:** [claims that require "contributed to" or "supported" framing]
 - **Do NOT claim:** [results owned by others, confidential details, claims that would be overclaiming]
+- **GitHub export interpretation notes:** [what is directly evidenced by PRs/commits/comments vs what is only inferred from repo context]
 
 ## Confidence & Confidentiality
 - **Claim confidence summary:** [high: N | medium: N | low: N]

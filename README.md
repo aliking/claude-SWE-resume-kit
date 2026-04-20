@@ -70,7 +70,7 @@ Each step uses a **separate Claude Code session** for best quality (fresh contex
 Want to see what it does before extracting your own materials? The repo includes a complete example knowledge base for a fictional researcher:
 
 ```bash
-git clone https://github.com/ARPeeketi/claude-resume-kit.git
+git clone https://github.com/aliking/claude-SWE-resume-kit.git
 cd claude-resume-kit
 claude
 /make-resume JDs/example_jd.txt
@@ -85,7 +85,7 @@ This runs the full pipeline — JD analysis, bullet selection, LaTeX generation 
 ### 1. Clone and configure
 
 ```bash
-git clone https://github.com/ARPeeketi/claude-resume-kit.git
+git clone https://github.com/aliking/claude-SWE-resume-kit.git
 cd claude-resume-kit
 ```
 
