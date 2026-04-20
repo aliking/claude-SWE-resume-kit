@@ -89,7 +89,7 @@ git clone https://github.com/aliking/claude-SWE-resume-kit.git
 cd claude-resume-kit
 ```
 
-Edit `config.md` with your details (name, email, provenance flags, role types). See `resume_builder/examples/example_config.md` for a complete example.
+Copy `config.template.md` to `config.md`, then edit `config.md` with your details (name, email, provenance flags, role types). See `resume_builder/examples/example_config.md` for a complete example.
 
 ### 2. Extract your source materials
 

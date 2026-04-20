@@ -13,7 +13,7 @@ Run a guided first-time setup that prepares the knowledge base for high-quality 
 
 ## Startup Checklist
 
-1. Read CLAUDE.md and config.md or _config.md.
+1. Read CLAUDE.md and config.md or config.template.md.
 2. Ensure required setup files exist with correct names.
 3. Propose source files to add under knowledge_base/sources/.
 4. Collect local repository paths and create repo manifest markdown files.
@@ -26,7 +26,7 @@ Normalize setup files before anything else:
 
 1. Config file:
 - If config.md exists: use it.
-- Else if _config.md exists: rename _config.md to config.md. prompt user for basic details to populate config.md if needed.
+- Else if config.template.md exists: duplicate config.template.md to config.md. prompt user for basic details to populate config.md if needed.
 
 2. Inventory file:
 - Preferred file: knowledge_base/extractions/_INVENTORY.md
