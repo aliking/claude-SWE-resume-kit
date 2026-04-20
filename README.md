@@ -1,10 +1,10 @@
 # claude-resume-kit
 
-Most AI resume tools work the same way: paste resume + paste JD, get a rewrite. They don't know which of your work shipped to production, which stayed internal, or which contributions were team-wide programs like mentoring or onboarding. They'll upgrade "contributed to" into "developed" without blinking.
+Most AI resume tools work the same way: paste resume + paste Job Description, get a rewrite. They don't know which of your work shipped to production, which stayed internal, or which contributions were team-wide programs like mentoring or onboarding. They'll upgrade "contributed to" into "developed" and add entirely made up impacts.
 
-This is different. You extract your projects, initiatives, codebases, and reports once — the system asks structured questions about each one. After that, every new application is just pointing it at a JD. It picks the right achievements, frames them for the audience, enforces accuracy, and generates LaTeX you compile locally.
+This is different. You extract information from projects, initiatives, codebases, annual reviews. The system asks structured questions about each one. After that, every new application is just pointing it at a Job Description. It picks the right achievements, frames them for the audience, enforces accuracy, and generates LaTeX you compile locally.
 
-Built for engineers and other professionals with lots of source material (projects, docs, reviews, reports, code) who apply to many positions across different employer types.
+This fork is customised for sofware engineers and other professionals with lots of source material (projects, docs, reviews, reports, code) trying to frame genuine achievements accurately.
 
 ---
 
@@ -26,7 +26,7 @@ Built for engineers and other professionals with lots of source material (projec
 
 Here's what the system generates for the included fictional researcher (Dr. Jordan Chen, computational biologist) applying to a tenure-track faculty position:
 
-- [Example Resume (PDF)](resume_builder/examples/example_resume.pdf) — 2-page resume with JD-tailored bullets, skills, and publications
+- [Example Resume (PDF)](resume_builder/examples/example_resume.pdf) — 2-page resume with Job Description-tailored bullets, skills, and publications
 - [Example Cover Letter (PDF)](resume_builder/examples/example_cover_letter.pdf) — 1-page tailored cover letter with specific hooks
 - [Example Session File](resume_builder/examples/example_session_file.md) — the decision log that produced this output
 - [Source .tex files](resume_builder/examples/output/) — the LaTeX source Claude generated
@@ -36,6 +36,8 @@ All example data is in `resume_builder/examples/` — extraction, experience fil
 ---
 
 ## What you actually do
+
+Try `/getting-started` to see the initial instructions.
 
 **One-time setup (~10 min per item):**
 1. Place source materials in `knowledge_base/sources/`
@@ -47,8 +49,13 @@ All example data is in `resume_builder/examples/` — extraction, experience fil
 2. Run `/setup-extract` on each — Claude reads it and asks you questions about your contributions and claim safety
 3. Run `/setup-build-kb` — synthesizes everything into your knowledge base
 
+**Ongoing maintenance:**
+- As you complete new projects, receive new performance reviews, or generate new supporting documentation, add them to `knowledge_base/sources/` and run `/setup-update` to incorporate them into your knowledge base.
+- You can also run `/setup-update` at any time to refresh your knowledge base with new extracted data
+
+
 **Per application (~15-20 min):**
-1. Drop the JD into `JDs/`
+1. Drop the Job Description into `JDs/`
 2. Run `/make-resume JDs/target_job.txt` — approve the bullet plan, get a `.tex` file
 3. Run `/make-cl` for a cover letter
 4. Run `/critique` for a scored review with specific fixes
