@@ -45,6 +45,9 @@
  *
  *   Custom output file name:
  *     GITHUB_TOKEN=ghp_xxx GITHUB_TARGET=their-login node export_github_contributions.js --org <org_name> --output my_output
+
+ *   Commit details limit per repo (stats + file extensions on commits):
+ *     GITHUB_TOKEN=ghp_xxx GITHUB_TARGET=their-login node export_github_contributions.js --org <org_name> --commit-details-limit 200
  *
  *   If no --org/--repo scope is provided, target-owned public repos are scanned.
  *
@@ -76,10 +79,7 @@ const GITHUB_API         = "https://api.github.com";
 const PER_PAGE           = 100;
 const RATE_PAUSE_MS      = 250;   // 250 ms between requests → well under 5000/hr
 const MAX_COMMITS_PER_REPO = 500;
-
-function formatPercent(value) {
-  return `${(value * 100).toFixed(1)}%`;
-}
+const DEFAULT_COMMIT_DETAILS_LIMIT = 100;
 
 function getFileExtension(filePath) {
   const normalizedPath = (filePath || "").toLowerCase();
@@ -187,6 +187,7 @@ function parseArgs() {
   let testMode = false;
   let output   = null;
   let startDate = null;
+  let commitDetailsLimit = DEFAULT_COMMIT_DETAILS_LIMIT;
   const repoTargets = [];
 
   for (let i = 0; i < argv.length; i++) {
@@ -198,12 +199,17 @@ function parseArgs() {
       startDate = argv[++i];
     } else if (argv[i] === "--output" && argv[i + 1]) {
       output = argv[++i];
+    } else if (argv[i] === "--commit-details-limit" && argv[i + 1]) {
+      const parsed = Number(argv[++i]);
+      if (Number.isInteger(parsed) && parsed >= 0) {
+        commitDetailsLimit = parsed;
+      }
     } else if (argv[i] === "--repo" && argv[i + 1]) {
       repoTargets.push(argv[++i]);
     }
   }
 
-  return { org, testMode, output, repoTargets, startDate };
+  return { org, testMode, output, repoTargets, startDate, commitDetailsLimit };
 }
 
 function parseStartDate(startDate) {
@@ -398,6 +404,10 @@ async function getPullRequestDetail(token, owner, repo, prNumber) {
 
 async function getPullRequestFiles(token, owner, repo, prNumber) {
   return await paginate(token, `${GITHUB_API}/repos/${owner}/${repo}/pulls/${prNumber}/files`);
+}
+
+async function getCommitDetail(token, owner, repo, sha) {
+  return await githubFetch(token, `${GITHUB_API}/repos/${owner}/${repo}/commits/${sha}`);
 }
 
 async function getEarliestCommit(token, owner, repo, params = {}) {
@@ -646,7 +656,7 @@ async function collectAuthoredIssues(token, owner, repo, target, startDate = nul
     }));
 }
 
-async function collectCommits(token, owner, repo, target, startDate = null) {
+async function collectCommits(token, owner, repo, target, startDate = null, commitDetailsLimit = DEFAULT_COMMIT_DETAILS_LIMIT) {
   const params = { author: target };
   if (startDate) {
     params.since = startDate.toISOString();
@@ -659,21 +669,37 @@ async function collectCommits(token, owner, repo, target, startDate = null) {
     MAX_COMMITS_PER_REPO
   );
 
-  return commits.map((c) => ({
-    sha:       c.sha.slice(0, 10),
-    message:   (c.commit?.message ?? "").split("\n")[0],
-    date:      c.commit?.author?.date ?? null,
-    url:       c.html_url,
-    additions: c.stats?.additions ?? null,
-    deletions: c.stats?.deletions ?? null,
-  }));
+  const results = [];
+  for (let i = 0; i < commits.length; i++) {
+    const c = commits[i];
+    let detail = null;
+
+    if (i < commitDetailsLimit) {
+      detail = await getCommitDetail(token, owner, repo, c.sha);
+    }
+
+    const detailFiles = Array.isArray(detail?.files) ? detail.files : [];
+    const fileSummary = detailFiles.length > 0 ? summarizePullRequestFiles(detailFiles) : null;
+
+    results.push({
+      sha:       c.sha.slice(0, 10),
+      message:   (c.commit?.message ?? "").split("\n")[0],
+      date:      c.commit?.author?.date ?? null,
+      url:       c.html_url,
+      additions: detail?.stats?.additions ?? null,
+      deletions: detail?.stats?.deletions ?? null,
+      file_summary: fileSummary,
+    });
+  }
+
+  return results;
 }
 
 // ─────────────────────────────────────────────────────────────
 // Main collection loop
 // ─────────────────────────────────────────────────────────────
 
-async function collectRepoFull(token, repo, target, startDate = null) {
+async function collectRepoFull(token, repo, target, startDate = null, commitDetailsLimit = DEFAULT_COMMIT_DETAILS_LIMIT) {
   const owner = repo.owner?.login;
   const repoName = repo.name;
   const full = `${owner}/${repoName}`;
@@ -683,7 +709,7 @@ async function collectRepoFull(token, repo, target, startDate = null) {
   const prReviews     = await collectPRReviews(token, owner, repoName, target, startDate);
   const issueComments = await collectIssueComments(token, owner, repoName, target, startDate);
   const authoredIssues = await collectAuthoredIssues(token, owner, repoName, target, startDate);
-  const commits       = await collectCommits(token, owner, repoName, target, startDate);
+  const commits       = await collectCommits(token, owner, repoName, target, startDate, commitDetailsLimit);
 
   const total = authoredPRs.length + prReviews.length + issueComments.length +
     authoredIssues.length + commits.length;
@@ -731,153 +757,11 @@ async function collectRepoFull(token, repo, target, startDate = null) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Markdown renderer
-// ─────────────────────────────────────────────────────────────
-
-function renderMarkdown(org, target, reposData, generatedAt) {
-  const lines  = [];
-
-  lines.push(`# GitHub Contributions Export`);
-  lines.push(``);
-  lines.push(`- **Organization:** ${org}`);
-  lines.push(`- **Target user:** ${target}`);
-  lines.push(`- **Generated:** ${generatedAt}`);
-  lines.push(`- **Repos with contributions:** ${reposData.length}`);
-  lines.push(``);
-  lines.push(`---`);
-  lines.push(``);
-
-  for (const r of reposData) {
-    lines.push(`## ${r.repo}`);
-    lines.push(``);
-
-    if (r.repo_metadata) {
-      const metadata = r.repo_metadata;
-      lines.push(`- **Repo description:** ${metadata.description || "(none)"}`);
-      lines.push(`- **Visibility:** ${metadata.visibility}  |  **Primary language:** ${metadata.primary_language || "unknown"}`);
-      lines.push(`- **Repo traits:** archived=${metadata.archived ? "yes" : "no"}, fork=${metadata.fork ? "yes" : "no"}`);
-      if (metadata.topics.length > 0) {
-        lines.push(`- **Topics:** ${metadata.topics.join(", ")}`);
-      }
-      if (metadata.language_breakdown.length > 0) {
-        lines.push(`- **Language breakdown:** ${metadata.language_breakdown.map((entry) => `${entry.language} ${formatPercent(entry.percent)}`).join(", ")}`);
-      }
-      if (metadata.target_is_first_contributor) {
-        const first = metadata.target_is_first_contributor;
-        lines.push(`- **First contributor signal:** ${first.value ? "yes" : "no"} (${first.confidence} confidence) - ${first.reason}`);
-      }
-      if (metadata.fork && metadata.target_is_first_contributor_after_fork) {
-        const firstAfterFork = metadata.target_is_first_contributor_after_fork;
-        lines.push(`- **First contributor after fork signal:** ${firstAfterFork.value ? "yes" : "no"} (${firstAfterFork.confidence} confidence) - ${firstAfterFork.reason}`);
-      }
-      if (metadata.homepage) {
-        lines.push(`- **Homepage:** ${metadata.homepage}`);
-      }
-      lines.push(``);
-    }
-
-    if (r.commits.length > 0) {
-      lines.push(`### Commits (${r.commits.length})`);
-      lines.push(``);
-      for (const c of r.commits) {
-        const dateStr  = c.date ? c.date.slice(0, 10) : "unknown";
-        const addDel   = c.additions != null ? ` (+${c.additions}/-${c.deletions})` : "";
-        lines.push(`- \`${c.sha}\` [${dateStr}]${addDel}  `);
-        lines.push(`  ${c.message}  `);
-        lines.push(`  ${c.url}`);
-      }
-      lines.push(``);
-    }
-
-    if (r.authored_prs.length > 0) {
-      lines.push(`### Authored Pull Requests (${r.authored_prs.length})`);
-      lines.push(``);
-      for (const pr of r.authored_prs) {
-        const mergedStr = pr.merged ? "merged" : pr.state;
-        const statsStr  = pr.changed_files != null
-          ? ` | ${pr.changed_files} files +${pr.additions}/-${pr.deletions}` : "";
-        const labelsStr = pr.labels.length > 0 ? ` [${pr.labels.join(", ")}]` : "";
-        lines.push(`#### PR #${pr.number}: ${pr.title}${labelsStr}`);
-        lines.push(`- **Status:** ${mergedStr}  |  **Opened:** ${(pr.created_at ?? "").slice(0, 10)}${statsStr}`);
-        lines.push(`- **URL:** ${pr.url}`);
-        if (pr.file_summary) {
-          lines.push(`- **Change shape:** new=${pr.file_summary.new_files}, updated=${pr.file_summary.updated_files}, deleted=${pr.file_summary.deleted_files}, renamed=${pr.file_summary.renamed_files}`);
-          lines.push(`- **Documentation/Test/Automation files:** docs=${pr.file_summary.documentation_files}, tests=${pr.file_summary.test_files}, automation=${pr.file_summary.automation_files}`);
-          if (pr.file_summary.extension_breakdown.length > 0) {
-            lines.push(`- **File types touched:** ${pr.file_summary.extension_breakdown.map((entry) => `${entry.extension} (${entry.files} files, +${entry.additions}/-${entry.deletions})`).join(", ")}`);
-          }
-        }
-        if (pr.body.trim()) {
-          lines.push(`- **Description:** ${pr.body.trim().slice(0, 600).replace(/\n/g, " ")}`);
-        }
-        lines.push(``);
-      }
-    }
-
-    if (r.pr_reviews.length > 0) {
-      lines.push(`### Pull Request Reviews (${r.pr_reviews.length})`);
-      lines.push(``);
-      for (const rev of r.pr_reviews) {
-        const dateStr = (rev.submitted_at ?? "").slice(0, 10);
-        lines.push(`#### Review on PR #${rev.pr_number}: ${rev.pr_title}`);
-        lines.push(`- **Verdict:** ${rev.review_state}  |  **Date:** ${dateStr}`);
-        lines.push(`- **PR URL:** ${rev.pr_url}`);
-        if (rev.review_body.trim()) {
-          lines.push(`- **Review summary:** ${rev.review_body.trim().slice(0, 400).replace(/\n/g, " ")}`);
-        }
-        if (rev.inline_comments.length > 0) {
-          lines.push(`- **Inline comments:** ${rev.inline_comments.length}`);
-          for (const ic of rev.inline_comments.slice(0, 5)) {
-            lines.push(`  - \`${ic.path}\`: ${ic.body.trim().slice(0, 200).replace(/\n/g, " ")}`);
-          }
-        }
-        lines.push(``);
-      }
-    }
-
-    if (r.authored_issues.length > 0) {
-      lines.push(`### Authored Issues (${r.authored_issues.length})`);
-      lines.push(``);
-      for (const issue of r.authored_issues) {
-        const labelsStr = issue.labels.length > 0 ? ` [${issue.labels.join(", ")}]` : "";
-        lines.push(`#### Issue #${issue.number}: ${issue.title}${labelsStr}`);
-        lines.push(`- **State:** ${issue.state}  |  **Opened:** ${(issue.created_at ?? "").slice(0, 10)}`);
-        lines.push(`- **URL:** ${issue.url}`);
-        if (issue.body.trim()) {
-          lines.push(`- **Description:** ${issue.body.trim().slice(0, 400).replace(/\n/g, " ")}`);
-        }
-        lines.push(``);
-      }
-    }
-
-    if (r.issue_comments.length > 0) {
-      lines.push(`### Issue/PR Comments (${r.issue_comments.length})`);
-      lines.push(``);
-      const shown = r.issue_comments.slice(0, 20);
-      for (const c of shown) {
-        const dateStr   = (c.created_at ?? "").slice(0, 10);
-        const preview   = c.body.trim().slice(0, 300).replace(/\n/g, " ");
-        lines.push(`- [#${c.issue_number} — ${dateStr}](${c.url}): ${preview}`);
-      }
-      if (r.issue_comments.length > 20) {
-        lines.push(`- _(+ ${r.issue_comments.length - 20} more — see JSON for full data)_`);
-      }
-      lines.push(``);
-    }
-
-    lines.push(`---`);
-    lines.push(``);
-  }
-
-  return lines.join("\n");
-}
-
-// ─────────────────────────────────────────────────────────────
 // Main
 // ─────────────────────────────────────────────────────────────
 
 async function main() {
-  const { org, testMode, output: outputArg, repoTargets, startDate } = parseArgs();
+  const { org, testMode, output: outputArg, repoTargets, startDate, commitDetailsLimit } = parseArgs();
 
   const token  = (process.env.GITHUB_TOKEN  ?? "").trim();
   const target = (process.env.GITHUB_TARGET ?? "").trim();
@@ -920,6 +804,7 @@ async function main() {
   if (parsedStartDate) {
     process.stderr.write(`Applying start date filter: ${parsedStartDate.toISOString()}\n\n`);
   }
+  process.stderr.write(`Commit details limit per repo: ${commitDetailsLimit}\n\n`);
 
   let reposToScan = [];
   let scopeLabel = "";
@@ -966,7 +851,7 @@ async function main() {
 
   const reposData = [];
   for (const repo of reposToScan) {
-    const data = await collectRepoFull(token, repo, target, parsedStartDate);
+    const data = await collectRepoFull(token, repo, target, parsedStartDate, commitDetailsLimit);
     if (data.has_contributions) {
       reposData.push(data);
       if (testMode) {
@@ -984,6 +869,7 @@ async function main() {
     scope: scopeLabel,
     selected_repositories: repoTargets,
     start_date: parsedStartDate ? parsedStartDate.toISOString() : null,
+    commit_details_limit: commitDetailsLimit,
     target_user: target,
     generated_at: generatedAt,
     repos: reposData,
