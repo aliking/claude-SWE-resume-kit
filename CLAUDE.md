@@ -139,7 +139,7 @@ _Update this section when starting/finishing a JD._
 
 | Session | Status | Next Command |
 |---------|--------|-------------|
-| internet_archive_software_engineer | Re-critique complete, self-audit pending | /edit-resume output/internet_archive/e2e_internet_archive_software_engineer_resume.tex output/internet_archive/critique_internet_archive_software_engineer_r4.md |
+| internet_archive_software_engineer | CURRENT (83.15/100) — submit-capable | Submit-capable; do not force "government documents/public records" wording without direct evidence. |
 
 ---
 

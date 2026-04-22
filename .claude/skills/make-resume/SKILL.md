@@ -10,10 +10,77 @@ user-invocable: true
 
 Parse `$ARGUMENTS`:
 - File path (e.g., `JDs/*.txt`) → read that file for the JD
+- Job URL (e.g., `https://...`) → fetch posting, normalize into a JD file in `JDs/`, then proceed with that file
 - Text after the path starting with "Focus:"/"Emphasize:"/"Downplay:" → focus directive
 - "Quick:" prefix → Quick Mode (see below)
 - Empty → ask the user for the JD
 - Inline JD text (no file path) → save to `JDs/temp_<company>.txt`, proceed normally
+
+---
+
+## JD URL Intake Addendum
+
+When the user provides a job URL, perform this intake before Phase 0.
+
+1. Parse URL + optional directive suffixes (`Focus:`, `Emphasize:`, `Downplay:`).
+2. Fetch the posting page content from the URL.
+3. Extract and normalize posting details into the canonical JD format below.
+4. Save to `JDs/<company>_<role>_<yyyymmdd>.txt` (lowercase, underscores; fallback `JDs/temp_job_<yyyymmdd>.txt`).
+5. Continue `/make-resume` using that saved JD path as the source JD.
+
+If fetch is partial/blocked:
+- Make one retry.
+- If still blocked, ask user to paste the JD text (or key sections), then write it into the canonical JD format and continue.
+
+If page has navigation clutter, prioritize core role text over marketing/legal boilerplate.
+
+### Canonical JD Format (for all new JD files created from URLs)
+
+Use this exact section order so downstream parsing is consistent:
+
+```text
+SOURCE
+- URL: <job URL>
+- Captured: <YYYY-MM-DD>
+- Access Notes: <ok | partial | blocked + note>
+
+ROLE SNAPSHOT
+- Company: <company name>
+- Role Title: <title>
+- Team/Org: <if available>
+- Location: <onsite/hybrid/remote + city/region>
+- Employment Type: <full-time/contract/etc>
+- Compensation: <if available>
+- Closing Date: <if available>
+
+ABOUT
+<short company/role summary from posting>
+
+RESPONSIBILITIES
+- ...
+
+REQUIRED QUALIFICATIONS
+- ...
+
+PREFERRED QUALIFICATIONS
+- ...
+
+TOOLS AND KEYWORDS
+- Languages: ...
+- Frameworks: ...
+- Cloud/Infra: ...
+- Domain Terms: ...
+- Soft Skills: ...
+
+NOTES
+- Any extraction caveats, missing sections, or assumptions.
+```
+
+Normalization rules:
+- Preserve factual wording where possible; lightly clean punctuation/whitespace only.
+- Never infer compensation, location, or requirements not present in source.
+- If unknown, use `Not listed`.
+- Remove duplicate bullets and boilerplate EEO text unless it contains role-relevant constraints.
 
 ---
 

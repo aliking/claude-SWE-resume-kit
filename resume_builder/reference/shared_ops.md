@@ -111,10 +111,21 @@ The tool is authoritative — never trust mental math for char counts. If the to
    - `e2e_<name>_[resume|cv].tex` + `.pdf` + compile artifacts
    - `e2e_<name>_cover_letter.tex` + `.pdf` + compile artifacts
    - `critique_<name>.md`
-2. Rename final PDFs for submission (derive name from `config.md` Personal Info):
-   - `cp e2e_<name>_[resume|cv].pdf <Firstname>_<Lastname>_[Resume|CV].pdf`
-   - `cp e2e_<name>_cover_letter.pdf <Firstname>_<Lastname>_Cover_Letter.pdf`
-   - Keep originals alongside
+2. Create submission-safe PDF names (personal + role, no company/job tokens):
+  - Derive `<role_slug>` from session file role type (preferred) or the resume title; short, lowercase, underscores.
+  - Canonical outputs:
+    - `<Firstname>_<Lastname>_<role_slug>.pdf`
+    - `<Firstname>_<Lastname>_<role_slug>_cover.pdf`
+  - Overwrite protection (same folder reruns): if a target filename already exists, append version suffixes `_v2`, `_v3`, etc.
+  - Example shell pattern:
+    - `base="<Firstname>_<Lastname>_<role_slug>"`
+    - `resume_target="$base.pdf"`
+    - `cover_target="${base}_cover.pdf"`
+    - `i=2; while [[ -e "$resume_target" ]]; do resume_target="${base}_v${i}.pdf"; ((i++)); done`
+    - `j=2; while [[ -e "$cover_target" ]]; do cover_target="${base}_cover_v${j}.pdf"; ((j++)); done`
+    - `cp e2e_<name>_[resume|cv].pdf "$resume_target"`
+    - `cp e2e_<name>_cover_letter.pdf "$cover_target"`
+  - Keep originals alongside
 3. Confirm to user: "Package complete in output/<FolderName>/ — [N] files"
 
 ---

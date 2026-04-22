@@ -55,10 +55,13 @@ Try `/getting-started` to see the initial instructions.
 
 
 **Per application (~15-20 min):**
-1. Drop the Job Description into `JDs/`
-2. Run `/make-resume JDs/target_job.txt` — approve the bullet plan, get a `.tex` file
-3. Run `/make-cl` for a cover letter
-4. Run `/critique` for a scored review with specific fixes
+1. Provide a Job Description source:
+     - Drop the Job Description into `JDs/` and run `/make-resume JDs/target_job.txt`, or
+     - Paste a job URL and run `/make-resume https://company.com/jobs/role`
+2. If URL mode is used, the skill captures the posting and saves a normalized JD file in `JDs/`, then continues normally
+3. Use `JDs/JD_FORMAT.template.txt` as the canonical JD structure when manually creating or cleaning JD files
+4. Run `/make-cl` for a cover letter
+5. Run `/critique` for a scored review with specific fixes
 
 Each step uses a **separate Claude Code session** for best quality (fresh context = less bias).
 
@@ -124,6 +127,12 @@ Open the templates in `resume_builder/templates/` and fill in your FIXED section
 
 ```
 /make-resume JDs/target_job.txt
+```
+
+Or start directly from a posting URL:
+
+```
+/make-resume https://company.com/jobs/software-engineer
 ```
 
 Then in separate sessions: `/make-cl` for the cover letter, `/critique` for a scored review.

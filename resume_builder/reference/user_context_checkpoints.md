@@ -26,6 +26,15 @@ When the system identifies a risky phrase, a keyword gap, or an abstract framing
    - JD emphasizes skill Y, but resume shows minimal evidence
    - Ask: "Do you have X experience that could frame as Y?"
 
+### Hard-Stop Triggers (Do NOT Ask Again Unless New Evidence)
+1. **User-declared non-bridge constraints**
+   - If user has explicitly said a phrase/domain is not truthfully claimable (recorded in `config.md` Provenance Flags or KB Corrections Log), do not re-ask that framing question on later runs.
+   - Mark as: `HARD LIMIT` and treat as resolved.
+2. **Previously answered "no honest framing" responses**
+   - If a prior checkpoint response states there is no defensible evidence, suppress future prompts for that same keyword cluster.
+3. **Only re-open when evidence changes**
+   - Re-ask only if user explicitly provides new evidence, artifacts, or corrections that materially change claimability.
+
 ### Tier 2 Triggers (Ask if Time/Context Allows)
 1. **Gap in /make-resume Phase 1 (bullet planning)**
    - JD requires skill Z, no direct extraction exists
@@ -217,6 +226,10 @@ Is this a low-confidence claim or phrase?
   → NO: Continue.
   → YES: Proceed to checkpoint.
 
+Is this keyword/phrase listed as a HARD LIMIT in config or prior Evidence Tracking?
+   → YES: Don't ask again. Record as "non-bridge constraint honored" and optimize elsewhere.
+   → NO: Continue.
+
 Will asking interrupt the workflow unacceptably?
   → YES (Tier 3 trigger): Document in session memory; suggest in final STOP
   → NO (Tier 1-2 trigger): Ask now.
@@ -258,6 +271,9 @@ Does the user have an easy answer?
 
 ❌ **Asking for evidence on things with solid provenance already documented**
 - Check extraction file first; if evidence exists, don't re-ask
+
+❌ **Repeatedly asking for claims the user has already ruled out on accuracy grounds**
+- If user has declared "cannot be framed honestly," do not ask again in later critique/edit cycles unless new evidence appears.
 - User will feel over-questioned and distrusted
 
 ❌ **Asking for evidence on FIXED sections**
