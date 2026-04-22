@@ -111,10 +111,41 @@ Show: `Budget: [N] bullets ([M] rendered lines) vs target [T]. PASS/FAIL`
 
 If edit targets **cover letter** (not resume): note this — Phase 4 will use CL-specific gates. Load CL .tex path from session file Output Files section.
 
+### Cover Letter Motivation Intake (MANDATORY for CL edits)
+
+If any confirmed edit touches CL Paragraph 1 or "why this company/role" framing, ask for user input before rewriting:
+1. Why this company specifically (in blunt terms)?
+2. Why this role specifically?
+3. Tone preference for the opening (direct, warm, restrained, intense, etc.)?
+4. Phrases or styles to avoid?
+5. One sentence they would naturally say out loud about applying.
+
+Rules:
+- Use user input as source material, then synthesize (do not copy full sentences verbatim unless explicitly requested).
+- Preserve intent and emotional signal while improving flow and clarity.
+- Avoid website-like mission restatement as opener unless user asks for it.
+- If answers are vague, ask one follow-up question before drafting.
+
+Record under session `## Cover Letter Plan` as "User voice hook inputs" and "Synthesis notes".
+
+**Provenance Defense Checkpoint (OPTIONAL — for REMOVE or MODIFY edits flagged as risky)**
+- Read `resume_builder/reference/user_context_checkpoints.md`
+- Review edit plan for items that REMOVE or MODIFY a phrase flagged as "low-confidence" or "abstract"
+- For each such edit: Ask user Format C (Phrase Defense): "Before I remove/soften '[phrase]', can you defend it with evidence?"
+  - Example: If plan includes "REMOVE: 'collection-integrity hardening'" ask "What project or artifact supports this phrase?"
+  - If user provides evidence: MODIFY instead (keep phrase, strengthen with concrete detail)
+  - If user cannot defend: REMOVE as planned (or soften phrasing)
+- Prepare 1 highest-impact defense question if any REMOVE edits are flagged as potentially valuable
+- **Do NOT ask:** removals of weak/unsupported claims, mechanical fixes, FIXED sections
+- **Record:** Note user's defense evidence in session file `## Evidence Tracking` for future KB updates
+
 ### >>>>>> MANDATORY STOP — DO NOT PROCEED <<<<<<
 Present numbered edit plan. Each item shows: what, why, source, classification (MODIFY/ADD/SWAP/FIXED).
+**IF provenance defense checkpoints were prepared:** Also ask: "Before I remove/soften these phrases, can you help me defend them?"
+Present the specific phrases and ask for evidence.
 **You MUST wait for the user's explicit text response before continuing.**
-Proceeding without confirmation may make unwanted edits that break package consistency.
+Proceeding without confirmation may make unwanted edits that break package consistency or remove defensible claims.
+**Update session file with confirmed edit plan and any user-provided defense evidence before proceeding to Phase 3.**
 
 ---
 
@@ -162,6 +193,7 @@ Update session file Edit N Status after each individual edit:
 | Page fill | 1pg: well-filled. 2pg: page 2 >= half filled before signature | Adjust |
 | Paragraph count | Product/Startup 3, Enterprise/Platform 3-4, Mission-driven/Public sector 4 | Restructure |
 | Anti-patterns | No generic opener, no defensive framing, no credential dump | Rewrite |
+| Motivation authenticity | P1 reflects user-provided motivation in synthesized form (not pasted raw text; not brochure tone) | Re-draft P1 with user voice |
 | Package cohesion | CL claims traceable to resume bullets, no contradictions | Fix |
 
 After all edits, compile:

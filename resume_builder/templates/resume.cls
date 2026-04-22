@@ -4,7 +4,7 @@
 % This template has been downloaded from:
 % http://www.LaTeXTemplates.com
 %
-% This class file defines the structure and design of the template. 
+% This class file defines the structure and design of the template.
 %
 % Original header:
 % Copyright (C) 2010 by Trey Hunner
@@ -18,11 +18,13 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\ProvidesClass{resume}[2018/09/25 v1.0 Resume class]  
+\ProvidesClass{resume}[2018/09/25 v1.0 Resume class]
 
 \LoadClass[10pt, a4paper]{article} % Font size and paper type
 \usepackage{lastpage}
 \usepackage[parfill]{parskip} % Remove paragraph indentation
+\usepackage[sfdefault]{carlito} % Use Carlito as the default sans-serif family
+\renewcommand{\familydefault}{\sfdefault}
 \usepackage{array} % Required for boldface (\bf and \bfseries) tabular columns
 \usepackage{ifthen} % Required for ifthenelse statements
 \usepackage{enumitem}
@@ -37,7 +39,7 @@
 
 \def \addressSep {$|$} % Set default address separator to a diamond
 
-% One, two or three address lines can be specified 
+% One, two or three address lines can be specified
 \let \@addressone \relax
 \let \@addresstwo \relax
 \let \@addressthree \relax
@@ -55,7 +57,7 @@
   \def \@addressfour {#1}
   } {\def \@addressone {#1}
   }
-     
+
   }
   }
 }
@@ -98,7 +100,7 @@
     \printaddress{\@addressthree}}
      \@ifundefined{@addressfour}{}{ % Print the third address if specified
     \printaddress{\@addressfour}}
-    
+
     % \end{center}
 }
 
@@ -194,6 +196,6 @@
 % The below commands define the whitespace after certain things in the document - they can be \smallskip, \medskip or \bigskip
 \def\namesize{\huge} % Size of the name at the top of the document
 \def\addressskip{\smallskip} % The space between the two address (or phone/email) lines
-\def\sectionlineskip{\medskip} % The space above the horizontal line for each section 
+\def\sectionlineskip{\medskip} % The space above the horizontal line for each section
 \def\nameskip{\medskip} % The space after your name at the top
 \def\sectionskip{\medskip} % The space after the heading section

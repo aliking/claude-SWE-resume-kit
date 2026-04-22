@@ -67,6 +67,31 @@ Update session file Status: `Cover Letter: IN_PROGRESS`
 
 Progress: "Loading CL context — [company], [role type] bundle, [institution type]..."
 
+### User Voice Hook Checkpoint (MANDATORY)
+
+Before drafting Paragraph 1, ask the user for blunt first-person input:
+1. Why this company specifically?
+2. Why this role specifically?
+3. Any opener language they dislike or want to avoid?
+4. What tone should the opening use? (e.g., direct, warm, restrained, intense)
+5. What is one sentence they would actually say out loud about this application?
+
+Rules:
+- Treat user wording as the primary source for the CL opening tone.
+- Synthesize for clarity, but preserve user's intent and emotional signal.
+- Do not use website-style mission copy as the opening sentence unless the user explicitly asks for it.
+- If the user has already provided this input in the active thread/session file, reuse it and proceed.
+- Never paste user text verbatim as a full sentence unless user explicitly requests exact wording.
+- If user input is vague, ask one follow-up question before drafting.
+
+Record concise notes in session file under `## Cover Letter Plan` as "User voice hook inputs" using this structure:
+- Why company:
+- Why role:
+- Preferred tone:
+- Avoid phrases:
+- Raw quote to preserve intent:
+- Synthesis notes (how raw input will be transformed):
+
 ---
 
 ## Phase 2: Generate Cover Letter
@@ -84,6 +109,13 @@ Read `resume_builder/templates/coverletter_template.tex`.
 - Ensure every major claim is traceable to a resume bullet
 - Open with a specific reference to their work — no generic openers
 - Weave credentials into body paragraphs, not closing
+
+Opening synthesis requirements (MANDATORY):
+- Build P1 from the user's motivation inputs first, then blend in one verified company-specific anchor.
+- Target a 70/30 balance in P1: about 70% candidate motivation and fit framing, about 30% company context.
+- Keep language natural and spoken, not brochure-like.
+- Do a "voice check" before finalizing P1: if it reads like corporate site copy, rewrite.
+- If uncertain between polished and authentic wording, choose authentic.
 
 Save to `output/<FolderName>/e2e_<name>_cover_letter.tex`
 

@@ -94,18 +94,42 @@ Find and read the session file for the .tex being critiqued (use derivation prot
     8. **Post-Generation Verification** — mechanical + content + structural checklists
 
 10. Save to `output/<FolderName>/critique_<name>.md`
-11. **Update session file** — Critique Summary (score, findings, tier 1 fixes), Status → Critique: CURRENT
-12. **Update memory pointer** with new score
+
+11. **User Context Checkpoint (OPTIONAL — if time/token budget allows)**
+    - Read `resume_builder/reference/user_context_checkpoints.md`
+    - Identify **Tier 1 triggers** from Section 9 (Provenance Questions) of critique you just generated
+    - Prepare 1-2 highest-impact context questions using Format A, B, or C from the reference
+    - Examples:
+      - "For [low-confidence claim], can you point to a specific project or artifact?"
+      - "The JD emphasizes [skill], do you have [related experience] that could frame as [skill]?"
+      - "Before I flag [phrase] as risky, can you defend it with evidence?"
+    - **Do NOT ask about:** FIXED sections, simple mechanical issues, well-supported claims
+    - **Record template:** Session file `## Evidence Tracking` section (use template from user_context_checkpoints.md)
+    - Include these questions in the presentation at the STOP (see below)
+
+12. **Update session file** — Critique Summary (score, findings, tier 1 fixes), Status → Critique: CURRENT
+13. **Update memory pointer** with new score
 
 Progress: "Reading session file for framing context..." / "Running ATS keyword scan — 16/20 match..." / "Scoring 8 dimensions..." / "Score: 87.0/100"
 
 ### >>>>>> MANDATORY STOP <<<<<<
-Present: score table + tier 1 actionable fixes + interview likelihood.
-**You MUST wait for the user's explicit text response before continuing.**
+Present:
+1. Score table + tier 1 actionable fixes + interview likelihood
+2. **IF** user-context checkpoints were prepared: "I have a follow-up question or two that could help us strengthen [claim/gap]:" + present questions
+3. Prompt: "**You MUST wait for explicit text response before continuing.**"
+
+**Acceptance Paths:**
+- User answers context questions: Record to session file Evidence Tracking. Ask if they want a follow-up /edit-resume pass, or are ready to finalize
+- User says "looks good" / "ready to submit": Proceed to finalization check
+- User says "fix X" / provides edit requests: Tell user to run `/edit-resume output/<FolderName>/e2e_<name>_resume.tex` with instructions
+
 If edits needed, tell user to run `/edit-resume`.
 
 ### When user approves / says "looks good" / finalizes:
-Verify all expected files exist in `output/<FolderName>/`:
-- session file, resume .tex + .pdf, CL .tex + .pdf, critique .md
-- Compile artifacts (.aux, .log, .out)
-Confirm to user: "Package complete in output/<FolderName>/ — [list files]"
+1. If Evidence Tracking was populated during this session: **Ask user:** "Should I record this framing evidence to your extractions/bundles for future JDs?"
+   - If yes: Record to relevant extraction files (see user_context_checkpoints.md Section "Recording Framing Evidence")
+   - If no: Keep in session file only (may surface in future /critique runs)
+2. Verify all expected files exist in `output/<FolderName>/`:
+   - session file, resume .tex + .pdf, CL .tex + .pdf, critique .md
+   - Compile artifacts (.aux, .log, .out)
+3. Confirm to user: "Package complete in output/<FolderName>/ — [list files]"

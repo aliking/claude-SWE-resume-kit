@@ -37,7 +37,6 @@ __pycache__/
 /knowledge_base/**
 !/knowledge_base/
 !/knowledge_base/**/
-!/knowledge_base/**/.gitkeep
 !/knowledge_base/extractions/_INVENTORY.template.md
 
 # JDs: ignore everything, keep only example JD
@@ -45,4 +44,11 @@ __pycache__/
 !/JDs/example_jd.txt
 
 # Session-specific (users may want to keep these — uncomment to ignore)
-# output/
+output/
+
+# Always keep placeholder files so empty dirs can be tracked
+!.gitkeep
+
+# Generated KB artifacts inside resume_builder
+/resume_builder/experience/**
+/resume_builder/bundles/**

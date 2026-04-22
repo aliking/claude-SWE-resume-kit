@@ -151,15 +151,28 @@ Proceeding without confirmation misaligns the entire resume and requires full re
 - Forced exclusions per provenance flags
 - Focus directive impact (what changed vs Priority Matrix defaults)
 
+**User Context Checkpoint (OPTIONAL — gap-filling)**
+- Read `resume_builder/reference/user_context_checkpoints.md`
+- Review JD Requirements table from session file Gap Assessment
+- Identify gaps where **JD requires Skill Y, but no direct extraction exists**
+- For each gap: Does user have **related experience X that could frame as Y?**
+  - Example: JD requires "web scraping," no direct extraction. User has web-driver E2E automation.
+  - Ask Format B: "Do you have [web-driver E2E] experience that could frame as [web scraping]?"
+- Prepare 1-2 highest-impact gap-filling questions (Tier 1 triggers per user_context_checkpoints.md)
+- **Do NOT ask:** gaps the user explicitly said to downplay (focus directives)
+- **Record:** Note any user-provided framing in session file under `## Evidence Tracking` if planning to use it
+
 **Update session file** — write Bullet Plan tables. Status: `Phase 1: DONE (N bullets confirmed)`
 
 Progress: "Reading experience files for bullet candidates..." / "Recommending N bullets per position"
 
 ### >>>>>> MANDATORY STOP — DO NOT PROCEED <<<<<<
-Present bullet plan. Wait for user to confirm/modify selections.
+Present bullet plan.
+**IF gap-filling questions were prepared:** Also ask: "For [gap Y], do you have experience with [related X] that could strengthen this section?"
+Wait for user to confirm/modify selections **AND** answer gap-filling questions if asked.
 **You MUST wait for the user's explicit text response before continuing.**
 If you proceed without confirmation, you will generate bullets the user didn't approve.
-**Update session file with confirmed plan before continuing.**
+**Update session file with confirmed plan and any user-provided framing evidence before continuing.**
 
 ---
 

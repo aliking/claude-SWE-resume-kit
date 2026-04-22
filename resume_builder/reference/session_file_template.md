@@ -93,6 +93,35 @@ Note: Any FIXED positions (e.g., internships) are not included in this plan.
 - Source: [critique item # / user request / auto-detected]
 - Verification: [gates passed]
 
+## Evidence Tracking
+
+> User context collected during /critique, /make-resume, or /edit-resume when low-confidence claims, keyword gaps, or abstract phrases are flagged.
+> Format: See `resume_builder/reference/user_context_checkpoints.md` for full entry template.
+
+### [Date] — Evidence: [Gap/Phrase Name]
+**Checkpoint Source:** [Critique item # / Make-Resume Phase 1 / Edit-Resume phrase defense]
+**Question Asked:** [One-shot summary]
+**User Response:**
+```
+[User's verbatim response or summary]
+```
+**Framing Discovered:** [What alternative framing / evidence was uncovered]
+**Confidence:** high / medium / low
+**Related Extractions:** [e.g., animoto2024_arm_mac_migration.md]
+**JD Keywords Covered:** [e.g., Python in platform enablement]
+**Action Taken:**
+- [ ] Kept phrase as-is
+- [ ] Strengthened with concrete detail
+- [ ] Reworded to be plainer
+- [ ] Removed phrase
+- [ ] Recorded to extraction as framing evidence
+- [ ] Updated bundle with alternative framing
+
+### Summary
+- Evidence items collected: [N]
+- Items recorded to extractions: [N]
+- New framing strategies discovered: [list]
+
 ## Status
 - Phase 0: [PENDING | DONE]
 - Phase 1: [PENDING | DONE (N bullets confirmed)]

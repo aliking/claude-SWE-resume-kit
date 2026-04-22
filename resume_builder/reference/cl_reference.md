@@ -58,6 +58,7 @@
 ## Universal CL Rules
 
 - Open with a specific reference to their work — avoid generic openers like "I am writing to express my interest"
+- Opening authenticity first: ask user why they want this company/role in blunt terms; synthesize their voice into P1 instead of mirroring website copy
 - Add narrative context the CV cannot — motivation, "why this company," research vision
 - Limit quantified claims to 3-5 per CL
 - Credentials woven into body paragraphs, not dumped in closing
