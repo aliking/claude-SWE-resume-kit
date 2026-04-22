@@ -140,7 +140,7 @@ Do NOT present the CL draft to the user until all hooks are verified or flagged.
 ## Phase 3: Compile & Verify
 
 ```bash
-pdflatex -interaction=nonstopmode -output-directory=output/<FolderName> output/<FolderName>/e2e_<name>_cover_letter.tex
+scripts/compile_tex.sh output/<FolderName>/e2e_<name>_cover_letter.tex
 ```
 
 Use Read tool to view compiled PDF. Verify:

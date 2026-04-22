@@ -198,7 +198,7 @@ Update session file Edit N Status after each individual edit:
 
 After all edits, compile:
 ```bash
-pdflatex -interaction=nonstopmode -output-directory=output/<FolderName> output/<FolderName>/[file].tex
+scripts/compile_tex.sh output/<FolderName>/[file].tex
 ```
 Use the Read tool to view the compiled PDF — check page count, white space, orphans, header wrapping.
 

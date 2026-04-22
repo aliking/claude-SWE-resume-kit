@@ -20,6 +20,8 @@ Parse `$ARGUMENTS`:
 - **review-pdf mode:** Annual/performance review PDFs (impact and non-technical evidence)
 - **mixed mode:** Multiple source types for one work item (recommended for strongest provenance)
 
+For **resume-pdf mode**, treat non-experience sections as first-class extraction candidates (for example: `Leadership & Volunteering`, mentoring/community blocks, and representation activities).
+
 ---
 
 ## Startup
@@ -42,6 +44,8 @@ Before deep extraction:
 1. Detect source mode for each input path
 2. Parse each source into candidate work items
 3. Build a candidate map showing likely duplicates across sources
+
+For resume PDFs, explicitly add candidate rows for non-experience sections if present (for example: leadership/volunteering entries that should become canonical fixed resume sections).
 
 **Candidate map output (required):**
 - Candidate work item title

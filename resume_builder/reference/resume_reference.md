@@ -35,8 +35,9 @@ Full package: Resume + CL = 3 pages | CV + CL = 6-7 pages
    - **After all positions: verify total variable bullet count matches budget**
 4. **Education**: FIXED — copy from template
 5. **Selected Publications** (pub_metadata.md): 5 publications scored per JD. Copy FIXED author+journal blocks, GENERATE JD-shortened title + tags. 2 rendered lines hard limit per entry.
-6. **Honors & Awards**: FIXED — items from template
-7. **Immigration notice**: FIXED for USA JDs. Delete for non-USA JDs.
+6. **Leadership & Volunteering**: FIXED — copy from template and source `resume_builder/support/leadership_volunteering.md`
+7. **Honors & Awards**: FIXED — items from template
+8. **Immigration notice**: FIXED for USA JDs. Delete for non-USA JDs.
 
 ### CV (cv.cls)
 

@@ -211,7 +211,7 @@ Each skill is a markdown file in `.claude/skills/<name>/SKILL.md`. You can:
 ## FAQ
 
 **Q: Do I need to know LaTeX?**
-No. Claude generates the `.tex` files. You just compile them (`pdflatex file.tex`). The templates handle all formatting.
+No. Claude generates the `.tex` files. Compile them from the repo root with `scripts/compile_tex.sh path/to/file.tex`. The wrapper sets `TEXINPUTS` so `resume.cls` and the template assets resolve correctly.
 
 **Q: How many items should I extract?**
 Extract the work items that best represent your strongest technical delivery and your strongest non-technical contributions. Quality matters more than quantity — 8 well-extracted items beat 30 shallow ones.

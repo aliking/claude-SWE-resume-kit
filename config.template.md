@@ -78,6 +78,7 @@ List template sections that should NEVER be modified during generation.
 These are copied verbatim from your template every time.
 
 - Education
+- Leadership & Volunteering
 - Publications (if applicable)
 - Honors & Awards
 - Header block (name, contact, links)

@@ -164,6 +164,20 @@ Progress: "Built taxonomy — [N] skills across [M] categories"
 
 Progress: "Evidence index — [N] technical items, [M] leadership/culture items, [K] external items"
 
+### Also build canonical leadership/volunteering section data
+
+**Build** `resume_builder/support/leadership_volunteering.md` from leadership/community/representation extractions that are safe for external use.
+
+Required fields per entry:
+- Organization
+- Dates
+- Role line
+- Concise contribution text
+- Source extraction filename
+- Claim safety flag
+
+This file is used as the canonical source for fixed `Leadership \& Volunteering` resume content.
+
 ---
 
 ## Phase 4: Build Achievement Reframing Guide
@@ -317,6 +331,7 @@ After all phases complete (or after the requested subset), present:
 | Experience files | `experience/*.md` | [DONE/MISSING] | [N achievements] |
 | Skills taxonomy | `support/skills_taxonomy.md` | [DONE/MISSING] | [N skills] |
 | Evidence index | `support/evidence_index.md` | [DONE/MISSING] | [N items] |
+| Leadership volunteering | `support/leadership_volunteering.md` | [DONE/MISSING] | [N entries] |
 | Reframing guide | `support/achievement_reframing_guide.md` | [DONE/MISSING] | [N entries] |
 | Bundles | `bundles/bundle_*.md` | [DONE/MISSING] | [N bundles] |
 | Significance | `support/significance_*.md` | [DONE/MISSING] | [N files] |

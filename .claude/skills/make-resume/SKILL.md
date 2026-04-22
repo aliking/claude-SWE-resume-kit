@@ -259,9 +259,11 @@ If you proceed without confirmation, you will generate bullets the user didn't a
 1. `output/<FolderName>/session_<name>.md` (framing + confirmed bullet plan)
 2. `resume_builder/reference/critical_rules.md` — Character Limits, Bold Width Penalty, Orphan rules
 3. `resume_builder/support/ai_fingerprint_rules.md` — Banned words, structural rules, post-gen checklist
+4. `resume_builder/support/leadership_volunteering.md` — canonical fixed section entries (if file exists)
 
 **Read template:** `resume_builder/templates/resume_template.tex` + `.cls`
 FIXED sections (from `config.md` FIXED Sections) are template-locked — only generate VARIABLE sections (Summary, Skills, Experience bullets/headers).
+If a fixed `Leadership \& Volunteering` section is present in the template, populate it from `resume_builder/support/leadership_volunteering.md` using externally safe phrasing.
 
 **Read section specs:** `resume_builder/reference/resume_reference.md` — Section-by-Section Specs for your format
 
@@ -292,7 +294,7 @@ Resume: <= 3 lines white space on last page. **If FAIL: add/trim variable bullet
 
 ### COMPILE GATE
 ```bash
-pdflatex -interaction=nonstopmode -output-directory=output/<FolderName> output/<FolderName>/e2e_<name>_resume.tex
+scripts/compile_tex.sh output/<FolderName>/e2e_<name>_resume.tex
 ```
 Verify page counts match `config.md` Document Preferences. Use the Read tool to view compiled PDF — check orphans, header wrapping, page fill. **If FAIL: fix variable content, recompile.**
 
@@ -318,3 +320,8 @@ Present: resume compilation summary (pages, char count results, any violations f
 "Resume compiled and verified. Next steps:
 1. /clear
 2. [exact /make-cl command with session file path]"
+
+If the user wants a submission-safe PDF name immediately, run:
+```bash
+scripts/finalize_resume_outputs.sh output/<FolderName>/session_<name>.md
+```
