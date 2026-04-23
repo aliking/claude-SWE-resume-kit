@@ -294,7 +294,7 @@ Resume: <= 3 lines white space on last page. **If FAIL: add/trim variable bullet
 
 ### COMPILE GATE
 ```bash
-scripts/compile_tex.sh output/<FolderName>/e2e_<name>_resume.tex
+bash scripts/safe-run.sh scripts/compile_tex.sh output/<FolderName>/e2e_<name>_resume.tex
 ```
 Verify page counts match `config.md` Document Preferences. Use the Read tool to view compiled PDF — check orphans, header wrapping, page fill. **If FAIL: fix variable content, recompile.**
 

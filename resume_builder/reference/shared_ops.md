@@ -117,7 +117,7 @@ The tool is authoritative — never trust mental math for char counts. If the to
     - `<Firstname>_<Lastname>_<role_slug>.pdf`
     - `<Firstname>_<Lastname>_<role_slug>_cover.pdf`
   - Preferred implementation:
-    - `scripts/finalize_resume_outputs.sh output/<FolderName>/session_<name>.md`
+    - `bash scripts/safe-run.sh scripts/finalize_resume_outputs.sh output/<FolderName>/session_<name>.md`
   - Overwrite protection (same folder reruns): if a target filename already exists, append version suffixes `_v2`, `_v3`, etc.
   - Example shell pattern:
     - `base="<Firstname>_<Lastname>_<role_slug>"`

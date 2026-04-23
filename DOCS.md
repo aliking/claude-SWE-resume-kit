@@ -1,13 +1,13 @@
 # Documentation
 
-Detailed reference for claude-resume-kit. For the quick overview, see [README.md](README.md).
+Detailed reference for claude-SWE-resume-kit. For the quick overview, see [README.md](README.md).
 
 ---
 
 ## Architecture
 
 ```
-claude-resume-kit/
+claude-SWE-resume-kit/
 ├── CLAUDE.md                          # Auto-loaded project instructions
 ├── config.md                          # Your personal configuration
 ├── .claude/skills/                    # 6 skills (invoked as /skill-name)
@@ -211,7 +211,7 @@ Each skill is a markdown file in `.claude/skills/<name>/SKILL.md`. You can:
 ## FAQ
 
 **Q: Do I need to know LaTeX?**
-No. Claude generates the `.tex` files. Compile them from the repo root with `scripts/compile_tex.sh path/to/file.tex`. The wrapper sets `TEXINPUTS` so `resume.cls` and the template assets resolve correctly.
+No. Claude generates the `.tex` files. Compile them from the repo root with `bash scripts/safe-run.sh scripts/compile_tex.sh path/to/file.tex`. The wrapper sets `TEXINPUTS` so `resume.cls` and the template assets resolve correctly.
 
 **Q: How many items should I extract?**
 Extract the work items that best represent your strongest technical delivery and your strongest non-technical contributions. Quality matters more than quantity — 8 well-extracted items beat 30 shallow ones.

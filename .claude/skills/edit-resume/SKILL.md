@@ -198,7 +198,7 @@ Update session file Edit N Status after each individual edit:
 
 After all edits, compile:
 ```bash
-scripts/compile_tex.sh output/<FolderName>/[file].tex
+bash scripts/safe-run.sh scripts/compile_tex.sh output/<FolderName>/[file].tex
 ```
 Use the Read tool to view the compiled PDF — check page count, white space, orphans, header wrapping.
 

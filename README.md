@@ -1,4 +1,4 @@
-# claude-resume-kit
+# claude-SWE-resume-kit
 
 Most AI resume tools work the same way: paste resume + paste Job Description, get a rewrite. They don't know which of your work shipped to production, which stayed internal, or which contributions were team-wide programs like mentoring or onboarding. They'll upgrade "contributed to" into "developed" and add entirely made up impacts.
 
@@ -81,7 +81,7 @@ Want to see what it does before extracting your own materials? The repo includes
 
 ```bash
 git clone https://github.com/aliking/claude-SWE-resume-kit.git
-cd claude-resume-kit
+cd claude-SWE-resume-kit
 claude
 /make-resume JDs/example_jd.txt
 ```
@@ -96,7 +96,7 @@ This runs the full pipeline — JD analysis, bullet selection, LaTeX generation 
 
 ```bash
 git clone https://github.com/aliking/claude-SWE-resume-kit.git
-cd claude-resume-kit
+cd claude-SWE-resume-kit
 ```
 
 Copy `config.template.md` to `config.md`, then edit `config.md` with your details (name, email, provenance flags, role types). See `resume_builder/examples/example_config.md` for a complete example.

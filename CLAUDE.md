@@ -1,4 +1,4 @@
-# claude-resume-kit — Project Instructions
+# claude-SWE-resume-kit — Project Instructions
 
 > This file is auto-loaded by Claude Code. It provides project-wide rules for all skills.
 
@@ -142,7 +142,7 @@ _Update this section when starting/finishing a JD._
 | generic_full_stack_dx | CURRENT (84.00/100) — critique complete, submit-capable with optional Tier 1 refinements | Review critique or run `/edit-resume output/generic_full_stack_dx/e2e_generic_full_stack_dx_resume.tex output/generic_full_stack_dx/critique_generic_full_stack_dx.md` |
 | goodleap_senior_software_engineer_tech_lead_full_stack | CURRENT (84.50/100) — submit-capable with targeted Tier 1 wording upgrades | Review critique or run `/edit-resume output/GoodLeap/e2e_goodleap_senior_software_engineer_tech_lead_full_stack_resume.tex output/GoodLeap/critique_goodleap_senior_software_engineer_tech_lead_full_stack.md` |
 | internet_archive_software_engineer | CURRENT (83.15/100) — submit-capable | Submit-capable; do not force "government documents/public records" wording without direct evidence. |
-| caremessage_senior_software_engineer_i_l3_applications_team | RESUME COMPLETE — ready for cover letter | `/make-cl output/CareMessage/session_caremessage_senior_software_engineer_i_l3_applications_team.md` |
+| caremessage_senior_software_engineer_i_l3_applications_team | CURRENT (85.20/100) — submit-capable; optional Tier 1 accessibility check remaining | Ask user for accessibility evidence, or submit. `/edit-resume output/CareMessage/e2e_caremessage_senior_software_engineer_i_l3_applications_team_resume.tex output/CareMessage/critique_caremessage_senior_software_engineer_i_l3_applications_team.md` |
 
 ---
 

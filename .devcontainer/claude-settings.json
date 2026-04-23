@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(ls)",
+      "Bash(ls *)",
+      "Bash(pwd)",
+      "Bash(find)",
+      "Bash(find *)",
+      "Bash(rg)",
+      "Bash(rg *)",
+      "Bash(cat)",
+      "Bash(cat *)",
+      "Bash(head)",
+      "Bash(head *)",
+      "Bash(tail)",
+      "Bash(tail *)",
+      "Bash(sed -n)",
+      "Bash(sed -n *)",
+      "Bash(wc)",
+      "Bash(wc *)",
+      "Bash(command -v)",
+      "Bash(command -v *)",
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git log)",
+      "Bash(git log *)",
+      "Bash(git show)",
+      "Bash(git show *)",
+      "Bash(node --version)",
+      "Bash(npm --version)",
+      "Bash(pdflatex --version)",
+      "Bash(bash scripts\\/safe-run.sh)"
+    ],
+    "ask": [
+      "Bash(npm install)",
+      "Bash(npm install *)",
+      "Bash(apt-get)",
+      "Bash(apt-get *)",
+      "Bash(rm)",
+      "Bash(rm *)",
+      "Bash(mv)",
+      "Bash(mv *)",
+      "Bash(cp)",
+      "Bash(cp *)",
+      "Bash(git add)",
+      "Bash(git add *)",
+      "Bash(curl)",
+      "Bash(curl *)",
+      "Bash(wget)",
+      "Bash(wget *)",
+      "Bash(git commit)",
+      "Bash(git commit *)",
+      "Bash(git merge)",
+      "Bash(git merge *)",
+      "Bash(git push)",
+      "Bash(git push *)",
+      "Bash(git reset)",
+      "Bash(git reset *)",
+      "Bash(git rebase)",
+      "Bash(git rebase *)"
+    ],
+    "deny": [
+      "Write(.devcontainer/devcontainer.json)",
+      "Edit(.devcontainer/devcontainer.json)",
+      "Write(.devcontainer/Dockerfile)",
+      "Edit(.devcontainer/Dockerfile)",
+      "Write(.devcontainer/claude-settings.json)",
+      "Edit(.devcontainer/claude-settings.json)",
+      "Write(scripts/safe-run.sh)",
+      "Edit(scripts/safe-run.sh)",
+      "Write(scripts/generate_claude_settings.js)",
+      "Edit(scripts/generate_claude_settings.js)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "allowUnsandboxedCommands": false,
+    "enableWeakerNestedSandbox": true,
+    "filesystem": {
+      "allowWrite": [
+        "./",
+        "/tmp"
+      ],
+      "denyRead": [
+        "~/.aws/credentials",
+        "~/.gnupg/**",
+        "~/.ssh/**"
+      ]
+    }
+  }
+}

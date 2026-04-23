@@ -71,7 +71,7 @@ Find and read the session file for the .tex being critiqued (use derivation prot
    ```
 7. Compile and visually verify:
    ```bash
-   scripts/compile_tex.sh [file.tex]
+   bash scripts/safe-run.sh scripts/compile_tex.sh [file.tex]
    ```
    Use the Read tool to view the compiled PDF — check orphans, page fill, header wrapping.
    If compile fails: note "COMPILE FAILED — visual checks could not be verified" in Part 8.
