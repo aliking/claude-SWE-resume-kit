@@ -14,6 +14,7 @@ Every JD gets a persistent session file: `output/<FolderName>/session_<name>.md`
 - **Bundle:** [role_type]
 - **Format:** [Resume/CV] ([N]-page, [cls]) + [N]-page cover letter
 - **Salary/Details:** [if available]
+- **Application Type:** [Standard | No CL (resume-only) | Form-based]
 
 ## JD Analysis
 ### Requirements
@@ -54,6 +55,8 @@ Every JD gets a persistent session file: `output/<FolderName>/session_<name>.md`
 
 ## Cover Letter Plan
 - **Institution type:** Industry / National Lab / Academic
+- **Application Type:** [Standard | No CL (resume-only) | Form-based]
+- **Form questions:** [if Form-based: list each question verbatim, numbered]
 - **Paragraph count:** [N] paragraphs, [word count target]
 - **P1 hook:** [specific product/paper/program to reference]
 - **P2-P3 evidence:** [which achievements to highlight, how to frame]
@@ -132,7 +135,7 @@ Note: Any FIXED positions (e.g., internships) are not included in this plan.
   - Position 2 ([N] bullets): [PENDING | DONE | IN_PROGRESS]
   - Position 3 ([N] bullets): [PENDING | DONE | IN_PROGRESS]
   - Compile: [PENDING | DONE]
-- Cover Letter: [PENDING | IN_PROGRESS | DONE]
+- Cover Letter: [PENDING | IN_PROGRESS | DONE | DONE (form-based) | N/A]
 - Critique: [PENDING | IN_PROGRESS | CURRENT (score) | STALE]
 - **Next:** [exact command to copy after /clear]
 - **Next CL:** /make-cl output/<FolderName>/session_<name>.md

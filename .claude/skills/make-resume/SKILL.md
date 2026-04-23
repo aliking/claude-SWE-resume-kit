@@ -156,12 +156,24 @@ Defaults:
 
 If web search returns no results: use JD text + training knowledge. Flag: "Web search returned limited results — CL hooks may be generic."
 
+**Application Type Detection (MANDATORY — do this before writing the session file):**
+
+Check the JD and application URL for signals:
+- Does the JD explicitly say no cover letter is accepted or required? → `No CL (resume-only)`
+- Does the JD or application page list specific form questions (e.g., "Why do you want to work at X?", "Describe a time when...")? → `Form-based` — record each question verbatim
+- Otherwise: attempt to infer from context (job board vs. direct ATS, company culture signals, if there is no apparent way to submit a cover letter). If signals are mixed or weak, default to `Standard` but note uncertainty in session file.
+
+If the application type cannot be determined from available information:
+> **Ask the user:** "Does this application accept a cover letter? Options: (1) Yes, standard CL; (2) No CL — resume only; (3) Form-based — paste the form questions."
+
+Record the result in the session file under both **JD Info** (`Application Type:`) and **Cover Letter Plan** (`Application Type:`).
+
 **Produce all of these (reference `resume_builder/reference/session_file_template.md` for format):**
 - **JD Analysis** — classify every requirement as Direct / Bridge (with confidence) / Gap. Extract ATS keywords by category.
 - **Company Context** — mission, role purpose, culture signals, "why them" angle (from web research)
 - **Framing Strategy** — lead narrative, reframing map, emphasize/downplay, CL hooks, user focus directives
 - **Critique Context** — reviewer persona, competitive landscape, domain vocabulary
-- **Cover Letter Plan** — institution type, paragraph structure, hooks, jargon level
+- **Cover Letter Plan** — institution type, application type, paragraph structure, hooks, jargon level; if form-based: list all form questions verbatim
 
 **Create output folder:**
 Derive folder name from JD filename: `JDs/JD_Acme.txt` → `output/Acme/`
@@ -267,6 +279,14 @@ If a fixed `Leadership \& Volunteering` section is present in the template, popu
 
 **Read section specs:** `resume_builder/reference/resume_reference.md` — Section-by-Section Specs for your format
 
+**If Application Type is `No CL (resume-only)` — Resume-Only Mode:**
+- The resume is the only written signal the reviewer will receive. Apply heightened scrutiny:
+  - Summary must function as both positioning statement AND motivation signal — no generic openers
+  - Every bullet must be fully self-contained: context, action, and outcome without CL support
+  - Prefer bullets with explicit scope indicators (team size, user count, timeline) over abstract impact claims
+  - Ensure at least one bullet per position speaks directly to the JD's primary requirement
+- Note this in session file Framing Strategy: "Resume-only — CL not accepted. Resume carries full narrative."
+
 **Generate section by section** (follow Section-by-Section Specs):
 1. Summary → check against session framing strategy
    - Update Status → `Phase 2: Summary DONE`
@@ -306,20 +326,28 @@ Update Status → `Phase 2: Compile DONE`
 
 ## End of /make-resume
 
-Update session file Status:
-- `Resume: DONE`
-- `Cover Letter: PENDING`
-- `Critique: PENDING`
+Check `Application Type` from session file, then update status accordingly:
+
+**Standard (cover letter accepted):**
+- `Resume: DONE` | `Cover Letter: PENDING` | `Critique: PENDING`
 - `Next: /make-cl output/<FolderName>/session_<name>.md`
-- `Next Critique: /critique output/<FolderName>/session_<name>.md`
+
+**No CL (resume-only):**
+- `Resume: DONE` | `Cover Letter: N/A — resume-only application` | `Critique: PENDING`
+- `Next: /critique output/<FolderName>/session_<name>.md`
+
+**Form-based:**
+- `Resume: DONE` | `Cover Letter: PENDING (form-based — questions recorded in Cover Letter Plan)` | `Critique: PENDING`
+- `Next: /make-cl output/<FolderName>/session_<name>.md`
 
 ### >>>>>> MANDATORY STOP <<<<<<
 Present: resume compilation summary (pages, char count results, any violations fixed).
 **You MUST wait for the user's explicit text response before continuing.**
 
-"Resume compiled and verified. Next steps:
-1. /clear
-2. [exact /make-cl command with session file path]"
+Present next steps based on application type:
+- **Standard:** "Resume compiled and verified. Next steps:\n1. /clear\n2. [exact /make-cl command with session file path]"
+- **No CL:** "Resume compiled and verified (resume-only application — no cover letter).\nNext steps:\n1. /clear\n2. [exact /critique command with session file path]"
+- **Form-based:** "Resume compiled and verified. Form questions recorded — /make-cl will use them as paragraph headings.\nNext steps:\n1. /clear\n2. [exact /make-cl command with session file path]"
 
 If the user wants a submission-safe PDF name immediately, run:
 ```bash

@@ -63,6 +63,13 @@ Read in this order:
 5. The matching bundle from session file role type → `resume_builder/bundles/bundle_[role_type].md` — Section 5 (Cover Letter)
 5. All significance files from `resume_builder/support/significance_*.md`
 
+**Application Type Check (MANDATORY — before any further work):**
+
+Read `Application Type` from session file Cover Letter Plan:
+- `No CL (resume-only)` → "This application does not accept a cover letter. Nothing to generate." Update Status: `Cover Letter: N/A`. Stop.
+- `Form-based` → Proceed to Form-Based CL Mode (see below) instead of Phase 2.
+- `Standard` (or not set) → Proceed to Phase 2 normally.
+
 Update session file Status: `Cover Letter: IN_PROGRESS`
 
 Progress: "Loading CL context — [company], [role type] bundle, [institution type]..."
@@ -91,6 +98,55 @@ Record concise notes in session file under `## Cover Letter Plan` as "User voice
 - Avoid phrases:
 - Raw quote to preserve intent:
 - Synthesis notes (how raw input will be transformed):
+
+---
+
+## Form-Based CL Mode
+
+Trigger: `Application Type` = `Form-based` in session file.
+
+**Purpose:** Generate a structured response document using the application's form questions as section headings. The user copies/pastes individual answers into the form. The file also serves as a permanent record of submitted content.
+
+**Read:** `resume_builder/reference/cl_reference.md` (anti-patterns and voice rules still apply), `resume_builder/support/ai_fingerprint_rules.md`.
+
+**Load form questions** from session file Cover Letter Plan (`Form questions:`).
+- If no questions were recorded, ask the user to paste them before proceeding.
+
+**Structure:**
+- Document title in .tex: "[Company] Application Responses — [Role Title]"
+- Each form question becomes a bold heading, followed by the response body
+- Target 100–200 words per question (adjust for question depth; factual / list-style questions can be shorter)
+- Order: preserve original form question order
+- Tone: use the same jargon level and voice as the standard CL would use
+
+**Content rules (same anti-fabrication standards as standard CL):**
+- Every claim traceable to a resume bullet
+- Read Provenance Flags before drafting; no upgrading contribution level
+- No generic openers ("I am excited to...") even as a response lead
+- Use specific evidence, not vague capability claims
+- For "Why this company?" — use the verified Company Context hooks from session file; apply the same CL Hook Verification Gate
+
+**User Voice Hook Checkpoint** applies to the "Why this company / Why this role" question only. Ask the same 5 questions from the standard flow, limited to those two questions if present.
+
+**File naming:** Save to `output/<FolderName>/e2e_<name>_form_responses.tex`
+
+**Compile & Verify Gate** (same as Phase 3 below, adapted):
+- No strict page/word limit, but flag any single answer exceeding 250 words
+- Anti-patterns check still applies
+- CL Hook Verification Gate still applies to all factual claims
+
+**Update session file:**
+- Output Files: add form responses .tex path
+- Status: `Cover Letter: DONE (form-based)`
+- Note: "Form responses generated — copy/paste individual sections into application form."
+
+### >>>>>> MANDATORY STOP — DO NOT PROCEED <<<<<<
+Present: question count, word count per question, any unverified hooks.
+**You MUST wait for the user's explicit text response before continuing.**
+
+"Form responses done. Copy/paste each section into the application form. Next steps:
+1. /clear
+2. [exact /critique command with session file path]"
 
 ---
 
