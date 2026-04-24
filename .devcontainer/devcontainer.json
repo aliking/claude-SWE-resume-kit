@@ -41,7 +41,6 @@
           "^pdflatex --version$": true,
           "^pdfinfo( .*)?$": true,
           "/^bash scripts\\/safe-run\\.sh/": { "approve": true, "matchCommandLine": true },
-          "/^mkdir -p \\/workspaces\\/claude-SWE-resume-kit\\/output\\/[^\\s]*$/": { "approve": true, "matchCommandLine": true },
           "^npm install( .*)?$": false,
           "^apt-get( .*)?$": false,
           "^rm( .*)?$": false,

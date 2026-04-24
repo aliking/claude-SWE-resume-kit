@@ -178,7 +178,7 @@ Record the result in the session file under both **JD Info** (`Application Type:
 **Create output folder:**
 Derive folder name from JD filename: `JDs/JD_Acme.txt` → `output/Acme/`
 ```bash
-mkdir -p output/<FolderName>/
+bash scripts/safe-run.sh scripts/prep_output.sh <FolderName>
 ```
 Write session file to `output/<FolderName>/session_<name>.md` (NOT flat `output/`).
 All subsequent output files go in this folder.

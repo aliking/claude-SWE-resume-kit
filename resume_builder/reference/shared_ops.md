@@ -124,10 +124,9 @@ The tool is authoritative — never trust mental math for char counts. If the to
 
 **Steps:**
 1. Derive folder name from JD filename: `JDs/JD_Acme.txt` → `output/Acme/`
-2. `mkdir -p output/<FolderName>/`
-3. Copy JD file into output folder: `cp JDs/<filename> output/<FolderName>/`
-4. Write session file to `output/<FolderName>/session_<name>.md`
-5. All subsequent output files (from ALL skills) go in this folder
+2. `bash scripts/safe-run.sh scripts/prep_output.sh <FolderName>`
+3. Write session file to `output/<FolderName>/session_<name>.md`
+4. All subsequent output files (from ALL skills) go in this folder
 
 ## Finalization (after /critique approval)
 

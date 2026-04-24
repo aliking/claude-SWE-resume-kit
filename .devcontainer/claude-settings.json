@@ -35,8 +35,6 @@
       "Bash(pdflatex --version)",
       "Bash(pdfinfo)",
       "Bash(pdfinfo *)",
-      "Bash(pdftotext)",
-      "Bash(pdftotext *)",
       "Bash(bash scripts\\/safe-run.sh)",
       "Bash(mkdir -p \\/workspaces\\/claude-SWE-resume-kit\\/output\\/[^\\s]*)"
     ],
