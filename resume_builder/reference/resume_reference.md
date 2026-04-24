@@ -27,6 +27,11 @@ Full package: Resume + CL = 3 pages | CV + CL = 6-7 pages
 
 ### Resume (resume.cls)
 
+**FIXED Section Integrity Rule (non-negotiable):**
+- Education and all other FIXED sections are copy-only from the configured template.
+- Do not generate or infer FIXED-section content from profile guesses, prior outputs, or model memory.
+- If a FIXED section appears incorrect, stop and ask the user to update the template; never "repair" it by invention.
+
 1. **Summary** (bundle Section 2): 4-5 sentences, exactly 5 body lines. 500-555 rendered chars (HARD MAX 570, floor ~490). Orphan: last line >= 78 chars.
    - **Headline Tagline:** 80-95 rendered chars, exactly 1 line.
 2. **Technical Skills** (bundle Section 4 + skills_taxonomy.md): Format C — 5 groups, default 4-3-2-2-2 (13 lines). Each dash = exactly 1 rendered line. Bold penalty: 119 - (0.5 x bold_chars).

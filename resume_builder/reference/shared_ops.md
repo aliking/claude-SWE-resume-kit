@@ -72,6 +72,32 @@ Example: `output/Acme/e2e_acme_engineer_resume.tex` → `acme_engineer` → look
 
 ---
 
+## Cover Letter Edit Capture (MANDATORY after user edits CL)
+
+Trigger: User says "I've updated the cover letter", "I edited the CL", or similar.
+
+**Why this approach:** The compiled PDF is the stable "before" snapshot. pdftotext is the authoritative source for before-text — it works even when session context is gone or a new session was started. Never rely on session memory alone.
+
+**Steps:**
+1. Run `pdftotext output/<FolderName>/e2e_<name>_cover_letter.pdf -` to extract before-text from the last compiled PDF.
+   - If pdftotext is unavailable: use session memory if available, or note the limitation clearly.
+2. Read current `e2e_<name>_cover_letter.tex` for the after-text (justify block only).
+3. Diff the two. Identify changes under these signal categories:
+   - **P1 opener:** What changed in the opening framing?
+   - **Evidence density:** More or less specific achievement evidence?
+   - **Paragraphs added/removed/merged?**
+   - **Tone shift:** More personal/authentic? More formal? Shorter?
+   - **Voice signals:** Any new phrases that reveal how the user wants to sound?
+4. Record the diff summary in the session file under `## Cover Letter Edit Signals`.
+5. Extract **phrasing signals only** into user memory at `/memories/cl_voice.md` — verbatim or near-verbatim phrases the user wrote. Do NOT draw structural conclusions (e.g. "always drop the breadth paragraph"). Just record the wording as evidence of how the user talks.
+6. Save the current .tex as the new `.generated.tex` baseline (overwrite) so the next diff is clean:
+   `cp output/<FolderName>/e2e_<name>_cover_letter.tex output/<FolderName>/e2e_<name>_cover_letter.generated.tex`
+7. Recompile: `bash scripts/safe-run.sh scripts/compile_tex.sh output/<FolderName>/e2e_<name>_cover_letter.tex`
+
+**After /make-cl generation:** Always save `.generated.tex` immediately after generating any cover letter .tex, before the user has a chance to edit. This is the baseline.
+
+---
+
 ## Progress Commentary
 
 Provide brief status updates at each major step. Minimum: what you're doing + what you found.
@@ -84,7 +110,9 @@ Per-phase examples are in each SKILL.md.
 
 ## Char Count Enforcement
 
-Run `python3 resume_builder/helpers/char_count.py` after each section or position you write/edit.
+Run `bash scripts/safe-run.sh scripts/char_count.sh` after each section or position you write/edit.
+
+**IMPORTANT:** Never call `python3 resume_builder/helpers/char_count.py` directly — this triggers VS Code permission prompts in the devcontainer. Always use the `scripts/char_count.sh` wrapper via `safe-run.sh` instead.
 
 The tool is authoritative — never trust mental math for char counts. If the tool fails, fall back to manual count and flag: "char_count.py unavailable — manual count, verify after compile."
 

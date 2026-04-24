@@ -26,7 +26,7 @@ Read `config.md` Provenance Flags before editing any content. Verify every claim
 - Use the email from `config.md` Personal Info in all outputs
 - Source ALL bullet content from `resume_builder/experience/` files. Never fabricate.
 - Resume bullets: ALL variable bullets must be 2L unless explicitly changed by user instruction
-- Run `python3 resume_builder/helpers/char_count.py` after edits — the tool is authoritative
+- Run `bash scripts/safe-run.sh scripts/char_count.sh` after edits — the tool is authoritative (do NOT call `python3 ... char_count.py` directly — triggers VS Code permission prompts)
 
 ### FIXED Sections — Refuse if Asked to Edit
 Check `config.md` FIXED Sections for the list of template-locked sections. Say no and explain: these are template-locked across all outputs.
@@ -69,7 +69,7 @@ Read in this order:
 4. Critique file (if provided in `$ARGUMENTS`)
 5. JD file (path from session file's JD Info section)
 6. Compile current .tex and record baseline page count
-7. Run: `python3 resume_builder/helpers/char_count.py -f resume [file.tex]`
+7. Run: `bash scripts/safe-run.sh scripts/char_count.sh -f resume [file.tex]`
 
 **Record baseline in session file** under `## Edit [N] Baseline` (scan existing Edit History sections; next N = max existing + 1, or 1 if none):
 
@@ -167,7 +167,7 @@ Apply edits one section at a time. After each edited section:
 
 1. Run char count gate:
    ```bash
-   python3 resume_builder/helpers/char_count.py -f resume output/<FolderName>/[file].tex
+   bash scripts/safe-run.sh scripts/char_count.sh -f resume output/<FolderName>/[file].tex
    ```
 2. Fix any OVER violations or orphans before next section
 3. If a bullet expansion doesn't render as expected (1L when targeting 2L, or 3L), adjust immediately

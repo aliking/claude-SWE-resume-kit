@@ -78,7 +78,7 @@ delve, tapestry, multifaceted, pivotal, realm, synergy, paradigm, holistic, nuan
 - **No rhetorical Q+A:** Never ask a question then answer it ("What makes this unique? The answer is...")
 - **No gerund fragment stacking:** Avoid sequences of 3+ "-ing" phrases ("developing, testing, and deploying...")
 - **No -ing analysis endings on bullets:** This is the **#1 structural AI marker**. Bullets must NOT end with "-ing" phrases like "...advancing the field," "...contributing to improved Y," "...enabling new Z." Fix: restructure so the bullet ends with a concrete result, metric, or object. Example: "...contributing to a 15% reduction" is fine (ends with metric); "...contributing to improved efficiency" is not (vague -ing ending).
-- **Max 2 em-dashes per document:** Count all `---` in the full .tex file (resume or CL). If more than 2, replace extras with commas, semicolons, or parentheses. Fellowships/Honors items use `. ` not `---`.
+- **Remove all em-dashes:** Count all `---` in the full .tex file (resume or CL). Replace with commas, semicolons, or parentheses, or find another way to phrase.
 - **Post-gen scan:** After generating any document, scan all bullets for -ing endings. Flag and fix any found.
 
 ### Prose-Level

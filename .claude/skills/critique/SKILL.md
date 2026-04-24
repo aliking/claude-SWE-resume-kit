@@ -67,7 +67,7 @@ Find and read the session file for the .tex being critiqued (use derivation prot
 5. Read the relevant bundle (`resume_builder/bundles/bundle_[role_type].md` — from session file)
 6. Run char count:
    ```bash
-   python3 resume_builder/helpers/char_count.py -f resume [file.tex]
+   bash scripts/safe-run.sh scripts/char_count.sh -f resume [file.tex]
    ```
 7. Compile and visually verify:
    ```bash

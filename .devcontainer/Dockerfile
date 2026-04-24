@@ -10,6 +10,7 @@ RUN apt-get update \
         jq \
         nodejs \
         npm \
+        poppler-utils \
         python3 \
         ripgrep \
         texlive-fonts-extra \

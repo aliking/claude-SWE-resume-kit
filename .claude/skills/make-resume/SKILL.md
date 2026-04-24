@@ -93,7 +93,7 @@ Read `config.md` Provenance Flags before generating any content. Verify every cl
 - Use the email from `config.md` Personal Info in all outputs
 - Resume bullets: ALL variable bullets are 2L (unless the user explicitly requests a longer variant)
 - Source ALL bullet content from `resume_builder/experience/` files. Never fabricate.
-- Run `python3 resume_builder/helpers/char_count.py` after each section — the tool is authoritative
+- Run `bash scripts/safe-run.sh scripts/char_count.sh` after each section — the tool is authoritative (do NOT call `python3 ... char_count.py` directly — triggers VS Code permission prompts)
 
 ---
 
@@ -275,6 +275,8 @@ If you proceed without confirmation, you will generate bullets the user didn't a
 
 **Read template:** `resume_builder/templates/resume_template.tex` + `.cls`
 FIXED sections (from `config.md` FIXED Sections) are template-locked — only generate VARIABLE sections (Summary, Skills, Experience bullets/headers).
+NEVER rewrite, paraphrase, infer, or "fill in" FIXED sections from memory or profile assumptions.
+For FIXED sections, copy verbatim from the template source already configured by the user.
 If a fixed `Leadership \& Volunteering` section is present in the template, populate it from `resume_builder/support/leadership_volunteering.md` using externally safe phrasing.
 
 **Read section specs:** `resume_builder/reference/resume_reference.md` — Section-by-Section Specs for your format
@@ -305,8 +307,9 @@ Progress: "Writing Position 1 bullets (6 of 7)..." / "Bullet 4 is SHORT at 184 c
 
 ### CHAR COUNT GATE (per position)
 ```bash
-python3 resume_builder/helpers/char_count.py -f resume output/<FolderName>/[file].tex
+bash scripts/safe-run.sh scripts/char_count.sh -f resume output/<FolderName>/[file].tex
 ```
+Use `scripts/char_count.sh` via `safe-run.sh` (NOT `python3 ... char_count.py` directly — the raw python3 call triggers VS Code permission prompts in this devcontainer).
 No OVER violations. Last line of 2L bullets >= 70% fill. **Fix before next position.**
 
 ### PAGE FILL GATE
@@ -316,6 +319,7 @@ Resume: <= 3 lines white space on last page. **If FAIL: add/trim variable bullet
 ```bash
 bash scripts/safe-run.sh scripts/compile_tex.sh output/<FolderName>/e2e_<name>_resume.tex
 ```
+`scripts/compile_tex.sh` enforces FIXED-section integrity checks (including Education) before running `pdflatex`.
 Verify page counts match `config.md` Document Preferences. Use the Read tool to view compiled PDF — check orphans, header wrapping, page fill. **If FAIL: fix variable content, recompile.**
 
 Run the Post-Generation Verification checklist from `resume_builder/reference/resume_reference.md` before proceeding.
