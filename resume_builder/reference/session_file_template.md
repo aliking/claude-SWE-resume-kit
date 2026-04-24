@@ -10,9 +10,11 @@ Every JD gets a persistent session file: `output/<FolderName>/session_<name>.md`
 ## JD Info
 - **File:** JDs/[file].txt
 - **Role:** [title]
+- **Role type:** [short role slug, e.g. "Senior Full Stack Engineer" — used for submission PDF filename]
+- **Output folder:** `output/[FolderName]/`
 - **Company:** [company] ([context])
 - **Bundle:** [role_type]
-- **Format:** [Resume/CV] ([N]-page, [cls]) + [N]-page cover letter
+- **Format:** Resume ([N]-page, [cls]) + [N]-page cover letter
 - **Salary/Details:** [if available]
 - **Application Type:** [Standard | No CL (resume-only) | Form-based]
 
@@ -81,7 +83,7 @@ Note: Any FIXED positions (e.g., internships) are not included in this plan.
 **Budget:** [N] variable bullets, [N] rendered lines vs target [N]
 
 ## Output Files
-- Resume/CV: `output/<FolderName>/e2e_<name>_[resume|cv].tex`
+- Resume: `output/<FolderName>/e2e_<name>_resume.tex`
 - Cover Letter: `output/<FolderName>/e2e_<name>_cover_letter.tex`
 - Critique: `output/<FolderName>/critique_<name>.md`
 

@@ -6,7 +6,7 @@
 #
 # Usage (via safe-run.sh):
 #   bash scripts/safe-run.sh scripts/char_count.sh -f resume output/Foo/e2e_foo_resume.tex
-#   bash scripts/safe-run.sh scripts/char_count.sh -f cv output/Foo/e2e_foo_cv.tex
+#   bash scripts/safe-run.sh scripts/char_count.sh -f resume output/Foo/e2e_foo_resume.tex
 #
 # All arguments are forwarded directly to char_count.py.
 

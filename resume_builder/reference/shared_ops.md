@@ -44,7 +44,7 @@ Every JD gets a persistent session file: `output/<FolderName>/session_<name>.md`
 
 **All output files use the same key:**
 - `output/<FolderName>/session_<name>.md` — context file
-- `output/<FolderName>/e2e_<name>_resume.tex` or `_cv.tex` — generated document
+- `output/<FolderName>/e2e_<name>_resume.tex` or `_cover_letter.tex` — generated document
 - `output/<FolderName>/e2e_<name>_cover_letter.tex` — cover letter
 - `output/<FolderName>/critique_<name>.md` — critique
 
@@ -54,7 +54,7 @@ Every JD gets a persistent session file: `output/<FolderName>/session_<name>.md`
 
 ## Session File Derivation (for /make-cl, /critique, and /edit-resume)
 
-From .tex path: strip `e2e_` prefix (if present) + `_resume.tex`/`_cv.tex`/`_cover_letter.tex` suffix → `<name>`.
+From .tex path: strip `e2e_` prefix (if present) + `_resume.tex`/`_cover_letter.tex` suffix → `<name>`.
 
 Example: `output/Acme/e2e_acme_engineer_resume.tex` → `acme_engineer` → look for `session_acme_engineer.md`
 
@@ -136,7 +136,7 @@ The tool is authoritative — never trust mental math for char counts. If the to
 **Steps:**
 1. Verify all expected files exist in `output/<FolderName>/`:
    - `session_<name>.md`
-   - `e2e_<name>_[resume|cv].tex` + `.pdf` + compile artifacts
+   - `e2e_<name>_resume.tex` + `.pdf` + compile artifacts
    - `e2e_<name>_cover_letter.tex` + `.pdf` + compile artifacts
    - `critique_<name>.md`
 2. Create submission-safe PDF names (personal + role, no company/job tokens):
@@ -153,7 +153,7 @@ The tool is authoritative — never trust mental math for char counts. If the to
     - `cover_target="${base}_cover.pdf"`
     - `i=2; while [[ -e "$resume_target" ]]; do resume_target="${base}_v${i}.pdf"; ((i++)); done`
     - `j=2; while [[ -e "$cover_target" ]]; do cover_target="${base}_cover_v${j}.pdf"; ((j++)); done`
-    - `cp e2e_<name>_[resume|cv].pdf "$resume_target"`
+    - `cp e2e_<name>_resume.pdf "$resume_target"`
     - `cp e2e_<name>_cover_letter.pdf "$cover_target"`
   - Keep originals alongside
 3. Confirm to user: "Package complete in output/<FolderName>/ — [N] files"

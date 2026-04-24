@@ -11,32 +11,21 @@
 | 1 line | 105-111 chars | 117 | -- |
 | 2 lines | 189-205 chars | 218 | Last line >= 78 chars |
 
-**CV (11pt, textwidth=7.5in):**
-
-| Target Lines | Rendered Char Range | HARD MAX | Orphan Threshold |
-|-------|---------------|---------|------------------|
-| 1 line | 88-93 chars | 101 | -- |
-| 2 lines | 168-182 chars | 190 | Last line >= 65 chars |
-| 3 lines | 250-268 chars | 280 | Last line >= 65 chars |
-
 ### Variant Naming
 
 | Variant | Document | Lines | Target Range | HARD MAX | Orphan | Word Target |
 |---------|----------|-------|-------------|----------|--------|-------------|
 | Resume-1L | 1/2-page resume | 1 | 105-111 | 117 | -- | ~13 words |
 | Resume-2L | 2-page resume | 2 | 189-205 | 218 | >= 78 | ~23-25 words |
-| CV-2L | 5-page CV | 2 | 168-182 | 190 | >= 65 | ~21-22 words |
-| CV-3L | 5-page CV | 3 | 250-268 | 280 | >= 65 | ~31-32 words |
 
 ## Bold Width Penalty
 
 Resume (10pt): Effective limit = 119 - (0.5 x bold_char_count)
-CV (11pt): Effective limit = 91 - (0.25 x bold_char_count)
 
 ## Orphan Rule
 
 Multi-line bullet last rendered line must fill >= 70% of line width.
-Resume 2L: last line >= 78 chars. CV 2L: >= 65 chars. CV 3L: >= 65 chars.
+Resume 2L: last line >= 78 chars.
 
 ## FIXED Sections — NEVER Modify
 
@@ -73,6 +62,4 @@ See `CLAUDE.md` for your project-specific KB corrections log. Always check befor
 
 ## Budget Reminder
 
-Resume: ~20 variable bullets (exact count depends on skills config + immigration line). CV: 19-21 bullets, 45 rendered lines.
-Resume bullets: ALL 2L. CV bullets: 2L/3L mix OK.
-**CV Page 1 rule:** First bullet of first experience MUST be 2L. A 3L first bullet overflows page 1.
+Resume: ~20 variable bullets (exact count depends on skills config + immigration line). All resume bullets are 2L.

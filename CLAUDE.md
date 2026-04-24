@@ -145,7 +145,7 @@ _Update this section when starting/finishing a JD._
 | caremessage_senior_software_engineer_i_l3_applications_team | CURRENT (85.20/100) — submit-capable; optional Tier 1 accessibility check remaining | Ask user for accessibility evidence, or submit. `/edit-resume output/CareMessage/e2e_caremessage_senior_software_engineer_i_l3_applications_team_resume.tex output/CareMessage/critique_caremessage_senior_software_engineer_i_l3_applications_team.md` |
 | aclu_software_engineer_ii_crm | CURRENT (76.1/100) — resume + CL + critique DONE 2026-04-23; 4 Tier 1 fixes available (~+2.1 pts); submit-capable at current state | Run `/edit-resume output/ACLU/e2e_aclu_software_engineer_ii_crm_resume.tex output/ACLU/critique_aclu_software_engineer_ii_crm.md` for Tier 1 fixes, or submit |
 | kagi_senior_full_stack_labs | FINALIZED (2026-04-24) — education fix + T1-1/T1-2 applied; submission PDFs in output/Kagi/ | — |
-| careervillage_frontend_software_engineer | Phase 0: DONE — awaiting user confirmation before Phase 1 | Confirm bundle/format/framing, then Phase 1 bullet plan |
+| careervillage_frontend_software_engineer | Phase 2: Resume DONE — cover letter pending | Run `/make-cl output/CareerVillage/session_careervillage_frontend_software_engineer.md` |
 
 ---
 

@@ -1,6 +1,6 @@
-# Resume & CV Generation — Reference
+# Resume Generation — Reference
 
-> Resume/CV-specific rules. Read by `/make-resume` and `/edit-resume`.
+> Resume-specific rules. Read by `/make-resume` and `/edit-resume`.
 > Companion files: `cl_reference.md` (CL rules), `critical_rules.md` (compact re-read).
 > Shared rules (provenance, anti-fabrication, LaTeX notation): `CLAUDE.md`
 
@@ -10,13 +10,11 @@
 
 ```
 RESUME (2-page, resume.cls):  ~20 variable bullets | Skills 13 lines (4-3-2-2-2) | 5 pubs | 5 awards
-CV     (5-page, cv.cls):      19-21 variable bullets (45 rendered lines) | Skills 17 lines (4-4-3-3-3) | all pubs | 6 awards
 
 Resume bullet: max 2 rendered lines | 1L: 105-111 chars | 2L: 189-205 chars (target ~200)
-CV bullet:     max 3 rendered lines | 2L: 168-182 chars | 3L: 250-268 chars (target ~175/~260)
 
-Cover letter: Resume = 1 page (250-300 words) | CV = 1-2 pages (350-450 words)
-Full package: Resume + CL = 3 pages | CV + CL = 6-7 pages
+Cover letter: 1 page (250-300 words)
+Full package: Resume + CL = 3 pages
 ```
 
 **If your bullet count doesn't match the budget above, STOP and fix before generating.**
@@ -44,19 +42,6 @@ Full package: Resume + CL = 3 pages | CV + CL = 6-7 pages
 7. **Honors & Awards**: FIXED — items from template
 8. **Immigration notice**: FIXED for USA JDs. Delete for non-USA JDs.
 
-### CV (cv.cls)
-
-1. **Research Summary** (bundle Section 2): Exactly 6 body lines. 500-540 rendered chars (HARD MAX 545, floor ~490). Orphan: last line >= 62 chars. Technical identity, not narrative.
-2. **Education**: FIXED — copy verbatim from cv_template.tex
-3. **Technical Expertise** (bundle Section 4 + skills_taxonomy.md): 4-4-3-3-3 ALWAYS (17 body lines). Bold penalty: 91 - (0.25 x bold_chars).
-4. **Research Experience**: Exactly 45 rendered bullet lines across 19-21 bullets, plus sub-theme lines.
-   - cv.cls: Args 3+4 on SEPARATE italic lines
-   - Max 3 rendered lines per bullet. CV-2L <= 190, CV-3L <= 280 (target ~175/~260)
-   - **Running total must reach exactly 45 rendered lines**
-5. **Fellowships & Honors**: FIXED — items from cv_template.tex
-6. **Publications**: FIXED — full list from cv_template.tex
-7-10. **Presentations, Mentorship, Collaborations, Computing**: All FIXED from cv_template.tex
-
 ---
 
 ## Character Limits (HARD STOPS — ZERO TOLERANCE)
@@ -74,16 +59,8 @@ Count: all remaining characters including spaces.
 | 1 line | 105-111 chars | 117 | -- |
 | 2 lines | 189-205 chars | 218 | Last line >= 78 chars |
 
-**CV (11pt, textwidth=7.5in):**
-
-| Target Lines | Rendered Char Range | HARD MAX | Orphan Threshold |
-|-------|---------------|---------|------------------|
-| 1 line | 88-93 chars | 101 | -- |
-| 2 lines | 168-182 chars | 190 | Last line >= 65 chars |
-| 3 lines | 250-268 chars | 280 | Last line >= 65 chars |
-
 > **WARNING: AIM FOR THE MIDDLE OF THE TARGET RANGE — NOT THE HARD MAX.**
-> A Resume-2L bullet should target ~200 chars, not 218. A CV-2L should target ~175, not 190.
+> A Resume-2L bullet should target ~200 chars, not 218.
 > The hard max exists as a safety valve, not a target. Proportional fonts have variable char widths —
 > a bullet at the hard max WILL overflow if it contains wide characters (m, w, W, capitals, em-dashes).
 > Em-dash (---) counts as 1 char but renders ~2x wide. Budget 2 extra chars per em-dash in the bullet.
@@ -94,8 +71,6 @@ Count: all remaining characters including spaces.
 |---------|----------|-------|-------------|----------|--------|-------------|
 | Resume-1L | 1/2-page resume | 1 | 105-111 | 117 | -- | ~13 words |
 | Resume-2L | 2-page resume | 2 | 189-205 | 218 | >= 78 | ~23-25 words |
-| CV-2L | 5-page CV | 2 | 168-182 | 190 | >= 65 | ~21-22 words |
-| CV-3L | 5-page CV | 3 | 250-268 | 280 | >= 65 | ~31-32 words |
 
 > **Word targets** are approximate first-draft heuristics for prose bullets (~7.9 chars/word). After drafting, always verify with precise char count. Skills dashes: NO word proxy -- use iterative char count only (technical tool lists average ~11 chars/word).
 
@@ -108,12 +83,7 @@ Bold characters render wider than normal text. Adjust effective char limits acco
 - 2-4 bold tools (~10-25 bold chars): 107-112 effective --> use 105-111 as default
 - 5+ bold tools (~28+ bold chars): ~105 effective --> tighten to 99-105
 
-**CV (11pt):** Effective limit = 91 - (0.25 x bold_char_count)
-- 0 bold: safe up to 91 chars/line (HARD MAX 93)
-- 2-3 bold tools (~10-18 bold chars): 85-88 effective --> use 83-88 as default
-- 5+ bold tools (~28+ bold chars): 83-85 effective --> tighten to 80-85
-
-Practical rule: count bold characters, subtract half (resume) or quarter (CV) from base limit.
+Practical rule: count bold characters, subtract half from base limit.
 
 **Per-bullet enforcement protocol:**
 1. Write the bullet text (LaTeX source)
@@ -130,7 +100,7 @@ For each element you write from scratch or modify (summary, skills dash, tagline
 
 1. **DRAFT** -- Use word-count target as initial guess (prose only, NOT skills dashes)
 2. **STRIP** -- Remove LaTeX markup (\textbf{}, \ce{}, $..$) to get rendered text
-3. **COUNT** -- Count rendered characters precisely. In Claude Code, use the helper: `python3 resume_builder/helpers/char_count.py "bullet text"` or verify a full .tex file: `python3 resume_builder/helpers/char_count.py -f [resume|cv] output/file.tex`
+3. **COUNT** -- Count rendered characters precisely. In Claude Code, use the helper: `python3 resume_builder/helpers/char_count.py "bullet text"` or verify a full .tex file: `python3 resume_builder/helpers/char_count.py -f resume output/file.tex`
 4. **CHECK** -- Compare against target range (use tighter targets from Variant Naming table, not HARD MAX)
 5. **FIX** -- If OVER and attempts < 3: rewrite/trim, go to step 2
 6. **FLAG** -- If OVER after 3 attempts: add `% OVER LIMIT: [N] chars, target [M]` LaTeX comment, move on
@@ -155,32 +125,6 @@ The exact variable bullet count depends on your skills configuration and whether
 - Adding a skills line (e.g., 4-4-2-2-2 instead of 4-3-2-2-2): -1 variable bullet
 - Removing immigration line (non-USA JD): +1 variable bullet in some configurations
 
-**5-Page CV (cv.cls, 11pt) — LOCKED:**
-
-Total: **~209 rendered text lines** across 5 pages. 1-2 lines slack at bottom of page 5 is acceptable.
-
-The exact line budget depends on your template's FIXED sections (publications, presentations, awards, etc.). Count the FIXED lines in your template, then allocate the remainder to JD-dependent content. The key constraints:
-
-| Category | Status |
-|----------|--------|
-| Header, Education, Honors, Pubs, Presentations, etc. | FIXED (count from template) |
-| Research Summary | JD-DEPENDENT (typically 7 lines: 1 heading + 6 body) |
-| Technical Expertise | JD-DEPENDENT (typically 18 lines: 1 heading + 17 body) |
-| Experience bullets | JD-DEPENDENT (**target 45 rendered lines**, 19-21 bullets, 2L/3L mix) |
-| Sub-theme names | JD-DEPENDENT (varies by position count) |
-
-**Experience bullet mix options (45 rendered lines):**
-- 18x2L + 3x3L = 21 bullets | 15x2L + 5x3L = 20 | 12x2L + 7x3L = 19
-- Allocate more bullets to JD-relevant positions, fewer to tangential ones
-
-**Sub-theme rebalancing:** To shift bullet weight toward a more JD-relevant sub-theme: (a) drop the weakest bullet from a less-relevant sub-theme (-2L), (b) split a high-content 3L achievement into two 2L bullets (method + finding, +1L). Net = -1L saved while adding a bullet where it matters. Both split bullets must stay within char limits. Never split a 2L bullet — it becomes two 1L fragments that look thin.
-
-**Position header rule:** The position title + date must fit on ONE line. If the title is too long, shorten the title so the date doesn't wrap to a second line. Wrapped dates waste a full vertical line and break visual alignment. Test by compiling — if the date wraps, trim the title.
-
-**CV Page 1 rule:** The FIRST bullet of the FIRST experience position MUST be 2L (not 3L). A 3L first bullet pushes content below the page 1 fold, wasting prime real estate. Plan this during Phase 1 bullet planning — if the top-priority achievement needs 3L, make it the SECOND bullet and lead with a strong 2L bullet instead.
-
-**Budget workflow:** The line budget is pre-calculated from your template. Do NOT recalculate. Use the bullet counts above directly. After generation, verify that total bullet rendered lines = 45 (count each bullet's rendered lines and sum).
-
 ---
 
 ## Experience Bullet Writing Protocol (Experience-File-First)
@@ -190,7 +134,7 @@ The exact line budget depends on your template's FIXED sections (publications, p
 **Required files:** Experience files (all) + achievement_reframing_guide.md + bundle Section 1 (Priority Matrix) + bundle Section 3 (Reframing Map)
 
 **Protocol:**
-1. Determine document format -> look up bullet variant (Resume-1L/2L, CV-2L/3L) and budget
+1. Determine document format -> look up bullet variant (Resume-1L/2L) and budget
 2. Allocate bullet count per position by JD relevance
 3. For each position, consult bundle's **Priority Matrix** (Section 1) to rank achievements
 4. For each achievement, consult **Achievement Reframing Guide** for role-type-specific framing directives
@@ -217,9 +161,6 @@ Italic subtitle = formal role + institution.
 | Position 3 | [Theme] ([Fellowship if applicable]) | [Your Role], [Institution 1] & [Institution 2] |
 | Internship | [Theme — FIXED] | [Your Role], [Company] | FLIPPED but FIXED |
 
-**CV -- CONVENTIONAL format:**
-Bold line = formal role title. Mentors on separate line. Sub-headers = story threads (underlined).
-
 ---
 
 ## Immutable Elements — NEVER Modify
@@ -232,7 +173,7 @@ The following elements are set in the `.cls` files and templates. **NEVER change
 - **`.cls` formatting** (font sizes, section rules, item separators, skill group spacing) — never override with inline LaTeX.
 - **Header layout** (name, email, location, icons) — structure is template-locked. Only the email address and link URLs are configurable.
 
-**If content spills to an extra page (orphan lines):** Fix by shortening VARIABLE content only (summary, skills dashes, experience bullets). Count rendered characters to ensure bullets actually fit their target line count (2L or 3L). A bullet that is "2L" in the budget but renders as 3L due to character overflow is the most common cause of page spill. Before declaring any output done, compile with pdflatex and verify page count matches target (resume=2, CV=5).
+**If content spills to an extra page (orphan lines):** Fix by shortening VARIABLE content only (summary, skills dashes, experience bullets). Count rendered characters to ensure bullets actually fit their target line count. A bullet that is "2L" in the budget but renders as 3L due to character overflow is the most common cause of page spill. Before declaring any output done, compile with pdflatex and verify page count matches target (resume=2).
 
 **When updating an existing .tex output (not generating from scratch):** Only modify VARIABLE content — summary text, skills group names/dashes, experience bullet text, sub-theme names. Never touch FIXED sections, vspaces, geometry, or cls overrides, even if a critique flags them as improvable. If a critique targets a FIXED section, note it for the next full regeneration instead.
 
@@ -248,7 +189,7 @@ Before presenting final output, verify:
 - [ ] Em-dash count: max 2 per document (resume or CL). Fellowships items use `. ` not `---`.
 - [ ] No -ing analysis endings on bullets ("...advancing the field", "...contributing to Y"). Restructure to end with a concrete result or metric.
 - [ ] All content checks pass (ATS, terms, inflation, provenance, pubs, cover letter)
-- [ ] All narrative checks pass (scan test, per-position flow, cross-position arc, CV sub-headers)
+- [ ] All narrative checks pass (scan test, per-position flow, cross-position arc)
 - [ ] Company/institution name spelled correctly throughout
 - [ ] .tex file has complete preamble (will compile standalone)
 - [ ] Date format consistent (Mon YYYY -- Mon YYYY)
@@ -292,8 +233,6 @@ For each identified gap, assess:
 |--------|---------|-------------|--------|---------------|
 | 1-page resume | ~6 | 3-5 | 2 | Omit |
 | 2-page resume | ~12+ | 5-8 | 2-3 | May omit |
-| 5-page CV | Comprehensive | All published + under review | All | All |
-| Full CV | Everything | All published + under review | All | All |
 
 ---
 
@@ -306,15 +245,6 @@ For each identified gap, assess:
 4. `pub_metadata.md` — Publication database with scoring tags
 5. `resume.cls` — Document class file
 6. `resume_template.tex` — Structural template (contains FIXED sections)
-7. Experience files from `resume_builder/experience/`
-
-**For CVs (5-page or full):**
-1. `bundle_[role_type].md` — Role-specific generation content (Sections 1-5)
-2. `achievement_reframing_guide.md` — Role-type framing directives for all achievements
-3. `skills_taxonomy.md` — Full skills inventory for Technical Expertise generation
-4. `pub_metadata.md` — Publication database with scoring tags
-5. `cv.cls` — Document class file
-6. `cv_template.tex` — Structural template (contains FIXED sections)
 7. Experience files from `resume_builder/experience/`
 
 **Role type to bundle mapping:**

@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-# check_pdf_fill.sh — Assess last-page fill of a compiled resume or CV PDF.
+# check_pdf_fill.sh — Assess last-page fill of a compiled resume PDF.
 #
 # Called via safe-run.sh to avoid VS Code permission prompts on compound
 # pdftotext commands that include pipes or flags.
 #
 # Usage (via safe-run.sh):
 #   bash scripts/safe-run.sh scripts/check_pdf_fill.sh output/Foo/e2e_foo_resume.pdf
-#   bash scripts/safe-run.sh scripts/check_pdf_fill.sh output/Foo/e2e_foo_cv.pdf -f cv
 #
 # Output:
 #   - Page count and which page is being assessed
@@ -15,8 +14,7 @@
 #   - PASS / WARN / FAIL verdict
 #
 # Thresholds (trailing blank lines on last page):
-#   resume:  PASS <= 3  |  WARN 4-8  |  FAIL > 8
-#   cv:      PASS <= 5  |  WARN 6-12 |  FAIL > 12
+#   PASS <= 3  |  WARN 4-8  |  FAIL > 8
 #
 # Note: line counts are from pdftotext -layout output, which approximates
 # visual page fill well but is not pixel-exact. Treat WARN as "check visually."
@@ -27,21 +25,12 @@ set -euo pipefail
 # Args
 # ---------------------------------------------------------------------------
 
-if [[ $# -lt 1 ]]; then
-  echo "Usage: check_pdf_fill.sh <pdf_file> [-f resume|cv]" >&2
+if [[ $# -ne 1 ]]; then
+  echo "Usage: check_pdf_fill.sh <pdf_file>" >&2
   exit 2
 fi
 
 PDF_FILE="$1"
-shift
-
-FORMAT="resume"
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    -f) FORMAT="$2"; shift 2 ;;
-    *) echo "check_pdf_fill: Unknown option: $1" >&2; exit 2 ;;
-  esac
-done
 
 if [[ ! -f "$PDF_FILE" ]]; then
   echo "check_pdf_fill: File not found: $PDF_FILE" >&2
@@ -52,13 +41,8 @@ fi
 # Thresholds
 # ---------------------------------------------------------------------------
 
-if [[ "$FORMAT" == "cv" ]]; then
-  PASS_MAX=5
-  WARN_MAX=12
-else
-  PASS_MAX=3
-  WARN_MAX=8
-fi
+PASS_MAX=3
+WARN_MAX=8
 
 # ---------------------------------------------------------------------------
 # Get page count via pdfinfo
@@ -111,7 +95,6 @@ fi
 # ---------------------------------------------------------------------------
 
 echo "PDF:              $PDF_FILE"
-echo "Format:           $FORMAT"
 echo "Pages:            $PAGES  (assessing page $PAGES)"
 echo "Non-blank lines:  $NONBLANK_LINES"
 echo "Trailing blank:   $TRAILING_BLANK lines"

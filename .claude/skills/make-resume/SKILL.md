@@ -313,7 +313,10 @@ Use `scripts/char_count.sh` via `safe-run.sh` (NOT `python3 ... char_count.py` d
 No OVER violations. Last line of 2L bullets >= 70% fill. **Fix before next position.**
 
 ### PAGE FILL GATE
-Resume: <= 3 lines white space on last page. **If FAIL: add/trim variable bullets.**
+```bash
+bash scripts/safe-run.sh scripts/check_pdf_fill.sh output/<FolderName>/[file].pdf
+```
+PASS = ≤ 3 trailing blank lines. **WARN or FAIL: add optional bullets from bullet plan, then recompile and recheck.**
 
 ### COMPILE GATE
 ```bash

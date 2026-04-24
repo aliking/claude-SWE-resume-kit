@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Count rendered characters in LaTeX resume/CV bullets.
+Count rendered characters in LaTeX resume bullets.
 Strips LaTeX markup to show what a reader actually sees on the page.
 
 Usage:
   python3 char_count.py "\\textbf{DFT} analysis of \\ce{TiO2} surfaces"
   echo "bullet text" | python3 char_count.py
-  python3 char_count.py -f cv output/file.tex
+  python3 char_count.py -f resume output/file.tex
   python3 char_count.py --raw "bullet text"              # just the number
 """
 
@@ -146,10 +146,10 @@ def extract_items(text):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Count rendered characters in LaTeX resume/CV bullets')
+        description='Count rendered characters in LaTeX resume bullets')
     parser.add_argument('input', nargs='?',
                         help='Bullet text or .tex file path')
-    parser.add_argument('-f', '--format', choices=['resume', 'cv'],
+    parser.add_argument('-f', '--format', choices=['resume'],
                         default='resume', help='Document format (default: resume)')
     parser.add_argument('--raw', action='store_true',
                         help='Output only char count (for scripting)')

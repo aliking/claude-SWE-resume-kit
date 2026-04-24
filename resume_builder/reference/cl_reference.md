@@ -8,8 +8,7 @@
 ## CL Format Rules
 
 - Cover letter with resume: 1 page (250-300 words)
-- Cover letter with CV: 1-2 pages (350-450 words). If 2 pages, page 2 >= half filled before signature.
-- Full package: Resume + CL = 3 pages | CV + CL = 6-7 pages
+- Full package: Resume + CL = 3 pages
 
 ---
 
@@ -59,7 +58,7 @@
 
 - Open with a specific reference to their work — avoid generic openers like "I am writing to express my interest"
 - Opening authenticity first: ask user why they want this company/role in blunt terms; synthesize their voice into P1 instead of mirroring website copy
-- Add narrative context the CV cannot — motivation, "why this company," research vision
+- Add narrative context the resume cannot — motivation, "why this company," research vision
 - Limit quantified claims to 3-5 per CL
 - Credentials woven into body paragraphs, not dumped in closing
 - Active call to action in closing — not passive "Thank you for your consideration"
@@ -76,10 +75,10 @@
 
 ## Package Reading Rules
 
-- Resume/CV must stand alone — many hiring managers never read the CL
-- CL deepens, not introduces — every major CL claim traceable to a resume/CV bullet
+- Resume must stand alone — many hiring managers never read the CL
+- CL deepens, not introduces — every major CL claim traceable to a resume bullet
 - No contradictions between documents
-- Resume + CL = 3 pages | CV + CL = 6-7 pages
+- Resume + CL = 3 pages
 
 ---
 

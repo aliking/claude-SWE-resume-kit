@@ -72,7 +72,7 @@ Write out all 7 elements as a structured section at the top of the critique file
 
 ## Part 1: Five-Perspective Read-Through
 
-Read the resume/CV from five different personas, in order. Each persona sees only what they'd actually read in their time window. Flag issues per persona.
+Read the resume from five different personas, in order. Each persona sees only what they'd actually read in their time window. Flag issues per persona.
 
 ### Perspective 1: ATS Robot (0 seconds — keyword scan)
 
@@ -119,7 +119,7 @@ Read the resume/CV from five different personas, in order. Each persona sees onl
 
 ### Perspective 4: Hiring Manager Read (2 minutes)
 
-**What they read:** Everything on the resume/CV. They're a domain expert.
+**What they read:** Everything on the resume. They're a domain expert.
 
 **What they decide:** "Interview or not? What would I ask?"
 
@@ -254,7 +254,7 @@ If a cover letter was generated in the same session, run all checks below. Detec
 
 ### 6A. Anti-Pattern Checklist
 - [ ] Does NOT open with "I am writing to express my interest" or similar generic opener
-- [ ] Does NOT rehash CV bullet points in prose (adds narrative context instead)
+- [ ] Does NOT rehash resume bullet points in prose (adds narrative context instead)
 - [ ] Names a specific PI/group/product/paper from the target institution
 - [ ] Has a clear "why THIS position at THIS institution" sentence (not generic)
 - [ ] Strongest qualification appears in paragraph 1, not buried in P3/P4
@@ -300,11 +300,11 @@ If a cover letter was generated in the same session, run all checks below. Detec
 - [ ] **Domain pivot:** If pivoting, leads with methodology in P1, not apologetic framing
 
 ### 6F. Package Cohesion Check
-- [ ] **Resume/CV stands alone:** If CL were deleted, does the resume/CV independently earn an interview? No critical context only in CL.
-- [ ] **CL deepens, not introduces:** Every major CL claim is traceable to a resume/CV bullet. CL adds context/significance, not new achievements.
+- [ ] **Resume stands alone:** If CL were deleted, does the resume independently earn an interview? No critical context only in CL.
+- [ ] **CL deepens, not introduces:** Every major CL claim is traceable to a resume bullet. CL adds context/significance, not new achievements.
 - [ ] **No contradictions:** Dates, metrics, claims, and framing consistent across both documents.
 - [ ] **Complement, not repeat:** CL is NOT a prose restatement of resume bullets. It adds motivation, "why this institution," research vision, methodology arc.
-- [ ] **Page budget:** Resume+CL = 3pp, CV+CL = 6-7pp. If CV CL is 2 pages, page 2 >= half filled before signature.
+- [ ] **Page budget:** Resume+CL = 3pp.
 
 ---
 
@@ -313,7 +313,7 @@ If a cover letter was generated in the same session, run all checks below. Detec
 ```markdown
 # Critique: [Company] [Role Title] ([Job ID])
 
-**Resume/CV File:** `output/[filename].tex`
+**Resume File:** `output/[filename].tex`
 **Date:** [date]
 
 ---
@@ -456,7 +456,7 @@ Final mechanical checklist. Run AFTER all other critique parts. These are pass/f
 ### Mechanical Checks
 - [ ] All bullets within char limits (no OVER violations from char_count.py)
 - [ ] All multi-line bullets pass orphan check (last line >= 70% fill)
-- [ ] Page fill within budget (resume: <= 3 lines white space on page 2; CV: 45 rendered bullet lines)
+- [ ] Page fill within budget (resume: <= 3 lines white space on page 2)
 - [ ] No ordering errors in bullet sequencing
 
 ### Content Checks
@@ -465,14 +465,14 @@ Final mechanical checklist. Run AFTER all other critique parts. These are pass/f
 - [ ] No forbidden terms (see CLAUDE.md for project-specific corrections)
 - [ ] No inflation (contributing-author verbs hedged, no false claims)
 - [ ] Publication entries match pub_metadata.md (titles, journals, years)
-- [ ] Cover letter claims traceable to resume/CV bullets
+- [ ] Cover letter claims traceable to resume bullets
 
 ### Structural Checks
 - [ ] Company/institution name spelled correctly throughout
 - [ ] .tex file has complete preamble (will compile standalone)
 - [ ] Date format consistent (Mon YYYY -- Mon YYYY)
 - [ ] Email address is correct (see CLAUDE.md for configured email)
-- [ ] Page count correct after compile (resume=2, CV=5)
+- [ ] Page count correct after compile (resume=2)
 
 **If any check fails, flag it as a Tier 1 fix in Part 4.**
 
