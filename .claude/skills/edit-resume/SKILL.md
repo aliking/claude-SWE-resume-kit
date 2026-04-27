@@ -17,6 +17,72 @@ If only .tex path and no instructions: ask the user what to fix.
 
 ---
 
+## Pipeline Mode
+
+**Trigger:** `$ARGUMENTS` contains `PIPELINE_MODE=true`
+
+In pipeline mode this skill runs as a **headless sub-agent** with no direct user interaction. At every mandatory stop it writes a structured `CHECKPOINT_RETURN` payload and immediately returns.
+
+Full checkpoint contracts and flow diagrams are in `resume_builder/reference/checkpoint_registry.md`.
+
+### Input Fields (pipeline)
+
+| Field | Description |
+|-------|-------------|
+| `PIPELINE_MODE=true` | Activates this mode |
+| `CHECKPOINT_ID=<id>` | Which checkpoint to stop at |
+| `SESSION_FILE=<path>` | Path to session file (required) |
+| `ARGS=<json>` | User answers from the previous checkpoint + critique file path; apply before executing |
+
+### Approved Tool Manifest
+
+In pipeline mode **only** these operations are permitted:
+- `bash scripts/safe-run.sh scripts/char_count.sh ...`
+- `bash scripts/safe-run.sh scripts/compile_tex.sh ...`
+- File read/write tools
+
+**Any other `bash` invocation** → return `blocked` immediately with `block_reason`.
+
+### Hard Rules
+
+1. **Never ask the user a question directly.** Return `needs_input` with a `questions` array.
+2. **Never stall for approval.** Return `needs_approval`.
+3. **Never run an unlisted command.** Return `blocked`.
+4. **Always write the session file before returning.**
+5. **Preserve non-pipeline behavior** when `PIPELINE_MODE` is absent.
+
+### Return Payload Schema
+
+Same schema as all skills (see `checkpoint_registry.md`). Write as final output, then stop.
+
+### Checkpoint Definitions
+
+#### `edit-resume.phase2.plan-confirm`
+**ARGS applied:** `q_t1_apply`, `critique_file` path, `inline_instructions` (optional additional user requests)
+**Execution:** Load Phase 1 context; run Phase 2 — build edit plan from T1 fixes + inline instructions; check for provenance defense questions (risky REMOVE/MODIFY items); run budget revalidation; record Edit N baseline.
+**Return:** `needs_input` with questions: `q_edit_plan`, `q_prov_defense_<n>` (per risky removal, if any).
+**Postcondition:** Edit [N] Baseline + draft edit plan written to session.
+
+#### `edit-resume.phase2.provenance-defense` *(optional — only if risky removals exist)*
+**ARGS applied:** `q_edit_plan`, `q_prov_defense_<n>`
+**Execution:** Apply defense answers — REMOVE→MODIFY where evidence provided; record to Evidence Tracking.
+**Return:** `done`. Next: `edit-resume.phase4.verify`.
+**Postcondition:** Final edit plan updated; Evidence Tracking appended.
+
+#### `edit-resume.phase4.verify`
+**ARGS applied:** `q_edit_plan` (confirmed or modified), defense answers (if applicable)
+**Execution:** Execute all confirmed edits one section at a time; char count gate after each; fix violations before next section; compile; page fill check; append Edit History to session.
+**Return:** `needs_input` with question: `q_edit_verify` (before/after delta table presented).
+**Postcondition:** `.tex` edited and compiled; Edit [N] Status updated; Edit History appended; Critique: STALE.
+
+#### `edit-resume.phase5.accept`
+**ARGS applied:** `q_edit_verify` (approved | further requests)
+**Execution:** If further requests → extend edit plan, re-execute, re-verify; else finalize session status.
+**Return:** `done`. Next: `pipeline.review.user-review-prompt`.
+**Postcondition:** Critique: STALE; final `.tex` and `.pdf` written; session Status updated.
+
+---
+
 ## Safety Rules (ALWAYS ENFORCED)
 
 **Accuracy > Relevance > Impact > ATS > Brevity**

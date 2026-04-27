@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "node ./scripts/hooks/pretooluse_block_devnull.js",
+        "timeout": 10
+      }
+    ]
+  }
+}

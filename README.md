@@ -2,19 +2,19 @@
 
 Most AI resume tools work the same way: paste resume + paste Job Description, get a rewrite. They don't know which of your work shipped to production, which stayed internal, or which contributions were team-wide programs like mentoring or onboarding. They'll upgrade "contributed to" into "developed" and add entirely made up impacts.
 
-This is different. You extract information from projects, initiatives, codebases, annual reviews. The system asks structured questions about each one. After that, every new application is just pointing it at a Job Description. It picks the right achievements, frames them for the audience, enforces accuracy, and generates LaTeX you compile locally.
+This tool is intended to be a collaborator system that helps you frame real experience accurately. It helps to extract signals from projects, git codebases, review documents and anything else you think can give a good feel for your real work. It then uses those signals to customize a resume and cover letter that are true and defensible, and also tailored.
 
-This fork is customised for sofware engineers and other professionals with lots of source material (projects, docs, reviews, reports, code) trying to frame genuine achievements accurately.
+This repo is based on https://github.com/ARPeeketi/claude-resume-kit, customized for software engineers or other non-academic professionals.
 
 ---
 
-## What makes this different
+## Principles
 
-**Knowledge base, not a rewriter.** You extract once. Every application draws from verified source material — not a pasted resume that gets "improved."
+**Knowledge base, not a rewriter.** The system is designed to build a structured knowledge base of your real experience, and then reframe that accurately for each application.
 
-**Anti-fabrication by design.** Provenance flags on every achievement (deployed / internal / open source / recurring initiative). Verb discipline rules prevent overclaiming. A corrections log ensures fixed errors don't reappear.
+**Anti-fabrication by design.** Every achievement is flagged for provenance. If you can't prove something, the system won't rank it highly for inclusion.
 
-**AI fingerprint avoidance.** Banned-word lists, structural anti-patterns, and a 12-item post-generation scan so output reads as human-written.
+**AI fingerprint avoidance.** Banned-word lists, structural anti-patterns, and a 12-item post-generation scan so output reads as more human-written. (You should still customize!)
 
 **Multi-perspective critique.** Five reader personas (ATS bot through technical reviewer) score your resume across 8 dimensions in a fresh context window.
 
@@ -22,18 +22,16 @@ This fork is customised for sofware engineers and other professionals with lots 
 
 ---
 
-## Example Output
+## Human-in-the-loop: expect a dialogue, not a vending machine
 
-Here's what the system generates for the included fictional researcher (Dr. Jordan Chen, computational biologist) applying to a tenure-track faculty position:
+This system is intentionally **slightly adversarial**. When you describe your work, the system will err on the side of underclaiming. This is good, you want it to be skeptical of your claims.
 
-- [Example Resume (PDF)](resume_builder/examples/example_resume.pdf) — 2-page resume with Job Description-tailored bullets, skills, and publications
-- [Example Cover Letter (PDF)](resume_builder/examples/example_cover_letter.pdf) — 1-page tailored cover letter with specific hooks
-- [Example Session File](resume_builder/examples/example_session_file.md) — the decision log that produced this output
-- [Source .tex files](resume_builder/examples/output/) — the LaTeX source Claude generated
+**Be completely honest.** Your framing — the words you use to describe ownership, scope, and impact — is captured in the session log and fed back into the knowledge base. Over time this calibrates the system to your voice and your actual contribution level. If you stretch claims early, the system will build on stretched claims.
 
-All example data is in `resume_builder/examples/` — extraction, experience file, bundle, config, and session file.
+**Common loop: gap identification → repo search.** During extraction and resume generation, the system will frequently identify gaps — work it can't find evidence for. Before accepting a gap, you can point it at a repository: *"That's not a gap — look for the auth refactor in `payments-service`, branch `feature/auth-overhaul`, 2023-Q3."* The system will search the repo manifest, extract evidence, and update the knowledge base. The Knowledge Base improves over time.
 
----
+**Cover letters take more iteration than resumes.** Resumes tend to come out strong on the first pass because they draw directly from structured KB bullets. Cover letters require your voice; the first draft will often feel AI-generated. Expect to rewrite cover letters more heavily at first. As you correct them and the system absorbs your edits, the output _should_ improve.
+
 
 ## What you actually do
 
@@ -41,54 +39,47 @@ Try `/getting-started` to see the initial instructions.
 
 **One-time setup (~10 min per item):**
 1. Place source materials in `knowledge_base/sources/`
-2. Suggested folders:
-     - `knowledge_base/sources/resume_inputs/` for old resume PDFs
-     - `knowledge_base/sources/performance_reviews/` for annual review PDFs
-     - `knowledge_base/sources/supporting_docs/` for project docs and notes
-     - `knowledge_base/sources/repo_manifests/` for markdown files listing local repo paths and branch/time ranges
+   - `knowledge_base/sources/resume_inputs/` for old resume PDFs
+   - `knowledge_base/sources/performance_reviews/` for annual review PDFs
+   - `knowledge_base/sources/supporting_docs/` for project docs and notes
+   - `knowledge_base/sources/repo_manifests/` for markdown files listing local repo paths and branch/time ranges
 2. Run `/setup-extract` on each — Claude reads it and asks you questions about your contributions and claim safety
 3. Run `/setup-build-kb` — synthesizes everything into your knowledge base
 
 **Ongoing maintenance:**
-- As you complete new projects, receive new performance reviews, or generate new supporting documentation, add them to `knowledge_base/sources/` and run `/setup-update` to incorporate them into your knowledge base.
-- You can also run `/setup-update` at any time to refresh your knowledge base with new extracted data
+- When you finish a project, get a new review, or want to capture recent codebase work: add the source and run `/setup-update`. It detects what's new and incorporates it without duplicating existing entries. If you have active repo access, make this a regular habit — the more current your KB, the less gap-filling you'll do at application time.
+- When the system identifies a gap during generation, point it at the right repo rather than accepting the gap: *"look for X in payments-service, 2023-Q3."* The KB improves each time.
 
+**Per application (~15-30 min with review):**
 
-**Per application (~15-20 min):**
-1. Provide a Job Description source:
-     - Drop the Job Description into `JDs/` and run `/make-resume JDs/target_job.txt`, or
-     - Paste a job URL and run `/make-resume https://company.com/jobs/role`
-2. If URL mode is used, the skill captures the posting and saves a normalized JD file in `JDs/`, then continues normally
-3. Use `JDs/JD_FORMAT.template.txt` as the canonical JD structure when manually creating or cleaning JD files
-4. Run `/make-cl` for a cover letter
-5. Run `/critique` for a scored review with specific fixes
+There are two routes. Choose based on how much control you want.
 
-Each step uses a **separate Claude Code session** for best quality (fresh context = less bias).
+**Route A — automated pipeline (hands-off, but slower):**
+```
+/run-pipeline JDs/target_job.txt
+OR
+/run-pipeline https://company.com/jobs/software-engineer
+```
+The pipeline manager drives the full sequence — Job Description research, resume generation, cover letter, critique, and edit pass — as **checkpointed sub-agent steps**. Each step runs in a fresh context window for quality. When a step needs your input (a provenance question, a gap you want to address, a cover letter draft to review), it pauses and surfaces the question to you directly. You answer, and it continues. Because each stage spawns its own sub-agent, total wall-clock time is longer than running manually.
+
+**Route B — manual, session by session (faster if you know what you're doing):**
+1. Open a new Agent session: `/make-resume JDs/target_job.txt` — or pass a URL
+2. New session: `/make-cl <session_path> ` — cover letter from the session file
+3. New session: `/critique <session_path>` — scored 8-dimension review
+4. New session: `/edit-resume output/<Folder>/resume.tex output/<Folder>/critique.md` — apply fixes and your own feedback
+
+Each step uses a **separate agent session** intentionally — fresh context avoids bias from prior output. Route B is the same steps as Route A, just triggered by you rather than the orchestrator.
+
+**Expect to spend real time on the cover letter.** The resume draws from structured KB bullets and is usually strong on the first pass. The cover letter requires narrative voice that the system doesn't have yet. Plan on rewriting it heavily for your first few applications; your edits are captured and used to calibrate future output.
 
 ---
 
 ## Prerequisites
 
-- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** CLI installed and authenticated
+- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** CLI installed and authenticated OR your preferred local agent runner with access to the repo
 - **A LaTeX distribution** for compiling `.tex` to `.pdf` (e.g., [TeX Live](https://tug.org/texlive/), [MacTeX](https://tug.org/mactex/), [MiKTeX](https://miktex.org/))
 - **Your project docs, notes, reviews, or reports** ready for extraction
-
----
-
-## Try it first (5 minutes)
-
-Want to see what it does before extracting your own materials? The repo includes a complete example knowledge base for a fictional researcher:
-
-```bash
-git clone https://github.com/aliking/claude-SWE-resume-kit.git
-cd claude-SWE-resume-kit
-claude
-/make-resume JDs/example_jd.txt
-```
-
-This runs the full pipeline — JD analysis, bullet selection, LaTeX generation — using the included example data. No setup required.
-
----
+**N.B.** This repository runs well in a vscode devcontainer with the above dependencies pre-installed. If you have docker, vscode and the devcontainer extension, you can open the repo in a devcontainer and avoid local setup.
 
 ## Full Setup
 
@@ -99,19 +90,61 @@ git clone https://github.com/aliking/claude-SWE-resume-kit.git
 cd claude-SWE-resume-kit
 ```
 
-Copy `config.template.md` to `config.md`, then edit `config.md` with your details (name, email, provenance flags, role types). See `resume_builder/examples/example_config.md` for a complete example.
+Copy `config.template.md` to `config.md`, then edit `config.md` with your details (name, email, provenance flags, role types).
 
-### 2. Extract your source materials
+### 2. Add your code repositories
 
-Place PDFs, markdown notes, and repo manifest files in `knowledge_base/sources/`, then:
+Code repositories are the richest evidence source. The system reads commit history, PR descriptions, and module ownership to identify what you actually committed. There are two ways to bring in repo evidence.
+
+**Option A — local clones (strongly preferred):** Local repos give full code context. Clone the repos you worked on to your machine, then create a manifest file describing each one:
+
+```bash
+# Example manifest: knowledge_base/sources/repo_manifests/payments_service_manifest.md
+# Repo path: /home/you/work/payments-service
+# Branch: main
+# Range: 2022-01-01 to 2024-06-30
+# Focus paths: src/auth/, src/billing/
+# Evidence purpose: Auth refactor, Stripe integration, rate-limiting work
+```
+
+Run `/getting-started` and it will guide you through creating manifest files for each repo. Then pass them to `/setup-extract`:
 
 ```
-/setup-extract knowledge_base/sources/resume_inputs/current_resume.pdf knowledge_base/sources/repo_manifests/platform_work.md knowledge_base/sources/performance_reviews/2025_review.pdf
+/setup-extract knowledge_base/sources/repo_manifests/payments_service_manifest.md
 ```
 
-Claude reads the item, asks clarifying questions about your contributions, and creates a structured extraction. Repeat for each item.
+**Option B — GitHub contributions export (no local access needed):** If you don't have local clones — or if you've since lost access to a codebase (e.g., after a layoff) — use the GitHub exporter script. It scans an org or repo via the GitHub API and exports your PRs, commits, and review comments as a JSON file for extraction.
 
-### 3. Build your knowledge base
+If you still have access to the org:
+```bash
+GITHUB_TOKEN=ghp_xxx GITHUB_TARGET=your-github-login node scripts/export_github_contributions.js --org your-company
+```
+
+If you no longer have org access, maybe you can ask someone who still does. They run the same command with their own token and `GITHUB_TARGET` set to your login. This script only extracts metadata: comments, commit names etc., which shouldn't be sensitive (also why it's less good signal. Hopefully you made good commit messages!). They return the JSON file, which you drop into `knowledge_base/sources/supporting_docs/`.
+
+For personal repos or public OSS contributions:
+```bash
+GITHUB_TOKEN=ghp_xxx GITHUB_TARGET=your-github-login node scripts/export_github_contributions.js --repo owner/repo
+```
+
+Then extract it:
+```
+/setup-extract knowledge_base/sources/supporting_docs/github_contributions_your-company.json
+```
+
+### 3. Extract your other source materials
+
+Place PDFs and notes in `knowledge_base/sources/`, then run extraction on them:
+
+```
+/setup-extract knowledge_base/sources/resume_inputs/current_resume.pdf knowledge_base/sources/performance_reviews/2025_review.pdf
+```
+
+Claude reads each item, asks clarifying questions about your contributions and claim safety, and creates a structured extraction.
+
+**Make `/setup-update` a regular habit.** If you actively work in a set of codebases, re-run `/setup-update` every few weeks or after any significant project wraps up. It detects what's new since your last extraction and incorporates it without duplicating existing entries. The more current your KB is, the less gap-chasing you'll do during application generation.
+
+### 4. Build your knowledge base
 
 ```
 /setup-build-kb
@@ -119,23 +152,25 @@ Claude reads the item, asks clarifying questions about your contributions, and c
 
 This synthesizes all extractions into experience files, role-type bundles, and support files.
 
-### 4. Customize your LaTeX templates
+### 5. Customize your LaTeX templates
 
 Open the templates in `resume_builder/templates/` and fill in your FIXED sections — education, header, awards, and optional publications. The `[CONFIG: ...]` placeholders show you what to fill in.
 
-### 5. Generate for a job
+### 6. Generate for a job
+
+Run the full pipeline in one command:
 
 ```
-/make-resume JDs/target_job.txt
+/run-pipeline JDs/target_job.txt
 ```
 
-Or start directly from a posting URL:
+Or start from a posting URL:
 
 ```
-/make-resume https://company.com/jobs/software-engineer
+/run-pipeline https://company.com/jobs/software-engineer
 ```
 
-Then in separate sessions: `/make-cl` for the cover letter, `/critique` for a scored review.
+The pipeline manager guides you through resume → cover letter → critique → edit pass, pausing to ask questions at each step. You can also run each stage individually (`/make-resume`, `/make-cl`, `/critique`, `/edit-resume`) in separate sessions if you prefer manual control.
 
 ---
 
@@ -144,19 +179,24 @@ Then in separate sessions: `/make-cl` for the cover letter, `/critique` for a sc
 ```
 Your Projects + Initiatives --> /setup-extract --> Extractions --> /setup-build-kb --> Knowledge Base
                                                                           |
-Job Description --> /make-resume --> Tailored Resume (.tex)               |
-                        |              v                                  |
-                   /make-cl --> Cover Letter (.tex)                       |
-                        |              v                                  |
-                   /critique --> 8-Part Score + AI Scan + Fixes           |
-                        |              v                                  |
-                   /edit-resume --> Refined Package                       |
+                  ┌───────────────────────────────────────────────────────┘
+                  ▼
+Job Description --> /run-pipeline ──────────────────────────────────────────────────────────────────┐
+                        │                                                                            │
+                        ├── /make-resume --> Tailored Resume (.tex)                                  │
+                        ├── /make-cl ──── --> Cover Letter (.tex)                                    │
+                        ├── /critique ─── --> 8-Part Score + AI Scan + Fixes                        │
+                        └── /edit-resume -> Refined Package ◄────── your review & CL rewrites ──────┘
 ```
+
+The pipeline pauses at each checkpoint to relay questions (provenance gaps, cover letter drafts, critique decisions) and waits for your input before continuing.
 
 | Skill | Purpose | Input | Output |
 |-------|---------|-------|--------|
+| `/run-pipeline` | Full JD pipeline, checkpointed | JD path or URL | Complete package in `output/<Folder>/` |
 | `/setup-extract` | Extract structured data from a project or initiative | Source path | `knowledge_base/extractions/*.md` |
 | `/setup-build-kb` | Build KB from extractions | All extractions | `resume_builder/{experience,bundles,support}/` |
+| `/setup-update` | Incrementally update KB with new material | New source paths | Updated extractions + KB files |
 | `/make-resume` | Generate tailored resume | JD path | `output/<Folder>/e2e_*.tex` + session file |
 | `/make-cl` | Generate matching cover letter | Session file | `output/<Folder>/*_cover_letter.tex` |
 | `/edit-resume` | Edit resume/CL from feedback | Session + feedback | Updated `.tex` files |
@@ -167,15 +207,6 @@ Job Description --> /make-resume --> Tailored Resume (.tex)               |
 ## Documentation
 
 For architecture details, customization tables, the full critique system breakdown, key design decisions, and FAQ, see **[DOCS.md](DOCS.md)**.
-
----
-
-## Contributing
-
-Issues and PRs welcome. When contributing:
-- Example files use the fictional Dr. Jordan Chen — keep examples in that persona
-- Reference docs should stay domain-agnostic
-- Test skill changes against the example data before submitting
 
 ---
 

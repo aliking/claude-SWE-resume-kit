@@ -31,7 +31,6 @@ claude-SWE-resume-kit/
 │   │   └── coverletter_template.tex   # Cover letter template
 │   ├── helpers/
 │   │   └── char_count.py              # Character counting utility for bullets
-│   ├── examples/                      # Fictional candidate — full worked example
 │   ├── experience/                    # YOUR experience files (built by /setup-build-kb)
 │   ├── bundles/                       # YOUR role-type bundles (built by /setup-build-kb)
 │   └── support/                       # Skills taxonomy, evidence index, AI fingerprint rules
@@ -214,7 +213,7 @@ Each skill is a markdown file in `.claude/skills/<name>/SKILL.md`. You can:
 No. Claude generates the `.tex` files. Compile them from the repo root with `bash scripts/safe-run.sh scripts/compile_tex.sh path/to/file.tex`. The wrapper sets `TEXINPUTS` so `resume.cls` and the template assets resolve correctly.
 
 **Q: How many items should I extract?**
-Extract the work items that best represent your strongest technical delivery and your strongest non-technical contributions. Quality matters more than quantity — 8 well-extracted items beat 30 shallow ones.
+It's ok to start with a few key items, and letting the system intially extract from an existing resume is a good way to get started. Over time, you will naturally add more items as you are reviewing jobs.
 
 **Q: Can I tailor this for different software engineering roles?**
 Yes. Define role types in `config.md` (for example full stack, backend, frontend, DX) and map JD keywords in the decision tree.

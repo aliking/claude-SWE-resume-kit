@@ -15,11 +15,18 @@
 ├── make-resume/SKILL.md         # Phase 0-2: JD research → bullet plan → resume generation
 ├── make-cl/SKILL.md             # Cover letter generation from session file
 ├── edit-resume/SKILL.md         # Edit resume from critique or user feedback
-└── critique/SKILL.md            # 8-dimension critique of full package
+├── critique/SKILL.md            # 8-dimension critique of full package
+└── pipeline-manager/SKILL.md   # /run-pipeline: full JD pipeline orchestrator (all skills in sequence)
+
+.github/agents/
+└── pipeline_orchestrator.agent.md  # Headless orchestrator: drives checkpointed sub-agents, relays questions
+
+resume_builder/reference/
+├── checkpoint_registry.md       # Canonical pipeline checkpoint IDs, contracts, flow diagrams
 
 resume_builder/
 ├── reference/
-│   ├── shared_ops.md            # Session startup, derivation, workflow — ALL skills
+│   ├── shared_ops.md            # Session startup, derivation, workflow, Resume Edit Capture, Orchestration Lifecycle — ALL skills
 │   ├── resume_reference.md      # Resume rules — /make-resume, /edit-resume
 │   ├── cl_reference.md          # CL rules — /make-cl, /edit-resume (CL edits)
 │   ├── critical_rules.md        # Compact re-read — /make-resume Phase 2
@@ -27,7 +34,6 @@ resume_builder/
 │   └── critique_framework.md    # 8-part critique system
 ├── templates/                   # LaTeX .cls + .tex templates
 ├── helpers/                     # char_count.py
-├── examples/                    # Example KB for a fictional candidate
 ├── experience/                  # /setup-build-kb outputs: one file per position
 ├── bundles/                     # /setup-build-kb outputs: one per target role type
 └── support/                     # /setup-build-kb outputs: skills taxonomy, pub metadata, etc.
@@ -41,6 +47,9 @@ knowledge_base/                  # User's raw materials
 	└── repo_manifests/          # Markdown files with local repo paths/ranges
 
 config.md                        # User configuration (email, provenance, role types)
+output/SESSIONS.md               # Active session state (gitignored — read at startup if present)
+output/CL_VOICE_SIGNALS.md      # User-authored CL phrasing signals (gitignored — schema in resume_builder/support/cl_voice_signals.md)
+output/RESUME_EDIT_SIGNALS.md   # Resume edit change signals (gitignored — schema in resume_builder/support/resume_edit_signals.md)
 ```
 
 ---
@@ -135,17 +144,9 @@ For char counting: `\ce{TiO2}` → 4 rendered chars, `$\beta$` → 1 rendered ch
 
 ## Active Sessions
 
-_Update this section when starting/finishing a JD._
+_Stored in `SESSIONS.md` (gitignored). Read that file for current session state._
 
-| Session | Status | Next Command |
-|---------|--------|-------------|
-| generic_full_stack_dx | CURRENT (84.00/100) — critique complete, submit-capable with optional Tier 1 refinements | Review critique or run `/edit-resume output/generic_full_stack_dx/e2e_generic_full_stack_dx_resume.tex output/generic_full_stack_dx/critique_generic_full_stack_dx.md` |
-| goodleap_senior_software_engineer_tech_lead_full_stack | CURRENT (84.50/100) — submit-capable with targeted Tier 1 wording upgrades | Review critique or run `/edit-resume output/GoodLeap/e2e_goodleap_senior_software_engineer_tech_lead_full_stack_resume.tex output/GoodLeap/critique_goodleap_senior_software_engineer_tech_lead_full_stack.md` |
-| internet_archive_software_engineer | CURRENT (83.15/100) — submit-capable | Submit-capable; do not force "government documents/public records" wording without direct evidence. |
-| caremessage_senior_software_engineer_i_l3_applications_team | CURRENT (85.20/100) — submit-capable; optional Tier 1 accessibility check remaining | Ask user for accessibility evidence, or submit. `/edit-resume output/CareMessage/e2e_caremessage_senior_software_engineer_i_l3_applications_team_resume.tex output/CareMessage/critique_caremessage_senior_software_engineer_i_l3_applications_team.md` |
-| aclu_software_engineer_ii_crm | CURRENT (76.1/100) — resume + CL + critique DONE 2026-04-23; 4 Tier 1 fixes available (~+2.1 pts); submit-capable at current state | Run `/edit-resume output/ACLU/e2e_aclu_software_engineer_ii_crm_resume.tex output/ACLU/critique_aclu_software_engineer_ii_crm.md` for Tier 1 fixes, or submit |
-| kagi_senior_full_stack_labs | FINALIZED (2026-04-24) — education fix + T1-1/T1-2 applied; submission PDFs in output/Kagi/ | — |
-| careervillage_frontend_software_engineer | Phase 2: Resume DONE — cover letter pending | Run `/make-cl output/CareerVillage/session_careervillage_frontend_software_engineer.md` |
+> **At startup:** read `SESSIONS.md` if it exists and use it as the source of truth for active sessions.
 
 ---
 

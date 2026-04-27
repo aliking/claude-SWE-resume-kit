@@ -15,6 +15,76 @@ Parse `$ARGUMENTS`:
 
 ---
 
+## Pipeline Mode
+
+**Trigger:** `$ARGUMENTS` contains `PIPELINE_MODE=true`
+
+In pipeline mode this skill runs as a **headless sub-agent** with no direct user interaction. At every mandatory stop it writes a structured `CHECKPOINT_RETURN` payload and immediately returns.
+
+Full checkpoint contracts and flow diagrams are in `resume_builder/reference/checkpoint_registry.md`.
+
+### Input Fields (pipeline)
+
+| Field | Description |
+|-------|-------------|
+| `PIPELINE_MODE=true` | Activates this mode |
+| `CHECKPOINT_ID=<id>` | Which checkpoint to stop at |
+| `SESSION_FILE=<path>` | Path to session file (required) |
+| `ARGS=<json>` | User answers from the previous checkpoint; apply before executing |
+
+### Approved Tool Manifest
+
+In pipeline mode **only** these operations are permitted:
+- `bash scripts/safe-run.sh scripts/compile_tex.sh ...`
+- `pdftotext ...` (hook verification)
+- File read/write tools
+- Web search / URL fetch — **only for URLs listed in the session file `## Orchestration State` → `Pre-Authorized URLs` field**. Do not fetch any URL not on that list.
+
+**Any other `bash` invocation** → return `blocked` immediately with `block_reason`.
+
+### Hard Rules
+
+1. **Never ask the user a question directly.** Return `needs_input` with a `questions` array.
+2. **Never stall for approval.** Return `needs_approval`.
+3. **Never run an unlisted command.** Return `blocked`.
+4. **Always write the session file before returning.**
+5. **Preserve non-pipeline behavior** when `PIPELINE_MODE` is absent.
+6. **Never fetch an unlisted URL.** Only fetch URLs present in `## Orchestration State → Pre-Authorized URLs`. Any other URL → return `blocked` with `block_reason: "URL not pre-authorized: <url>"`.
+
+### Return Payload Schema
+
+Same schema as all skills (see `checkpoint_registry.md`). Write as final output, then stop.
+
+### Checkpoint Definitions
+
+#### `make-cl.phase1.app-type-confirm`
+**ARGS applied:** *(none required)*
+**Execution:** Read session Application Type. If already set → `done` (auto-pass). If unset or ambiguous → `needs_input`.
+**Return (if unknown):** `needs_input` with questions: `q_cl_app_type`, `q_form_questions` (if form-based selected).
+**Postcondition:** Application Type written to session if was previously unknown.
+
+#### `make-cl.phase1.voice-intake`
+**ARGS applied:** `q_cl_app_type` (if just set)
+**Execution:** Apply app type to session if just set; set Cover Letter: IN_PROGRESS.
+**Return:** `needs_input` with questions: `q_why_company`, `q_why_role`, `q_tone`, `q_avoid`, `q_raw_quote`.
+**Preamble must include:** Confirmed app type (Standard/Form-based), detected tone signals from the JD (e.g., mission-driven, technical, startup casual), any specific hooks or details in the JD worth mentioning in the CL, and any "avoid" patterns already detected (e.g., jargon, generic opener patterns).
+**Postcondition:** Cover Letter: IN_PROGRESS written to session.
+
+#### `make-cl.phase2.hook-verify`
+**ARGS applied:** `q_why_company`, `q_why_role`, `q_tone`, `q_avoid`, `q_raw_quote`
+**Execution:** Record voice inputs to session; generate full CL (Standard) or form responses (Form-based); run CL Hook Verification Gate (web-search all factual hooks); compile.
+**Return:** `done` if all hooks verified (next: `make-cl.phase3.cl-done`) OR `needs_input` with `q_hook_<n>` per unverified hook.
+**Preamble must include (only on needs_input):** List of hooks that failed verification, what was found vs. what was claimed for each, and suggested replacement text (or a prompt to confirm/correct).
+**Postcondition:** CL `.tex` written and compiled; hook results in session.
+
+#### `make-cl.phase3.cl-done`
+**ARGS applied:** `q_hook_<n>` (corrections for any unverified hooks)
+**Execution:** Apply hook corrections; recompile if needed; verify word count + page count gates; update session Cover Letter: DONE.
+**Return:** `done`. Next: `critique.phase1.score-return`.
+**Postcondition:** Cover Letter: DONE; final `.tex` and `.pdf` written.
+
+---
+
 ## Safety Rules (ALWAYS ENFORCED)
 
 **Accuracy > Relevance > Impact > ATS > Brevity**
@@ -60,8 +130,9 @@ Read in this order:
 2. **Finished resume .tex** — path from session file Output Files. Read to understand what CL must complement.
 3. `resume_builder/reference/cl_reference.md` — CL format rules, paragraph templates, anti-patterns
 4. `resume_builder/support/ai_fingerprint_rules.md` — Banned words, structural rules (CLs are most vulnerable)
-5. The matching bundle from session file role type → `resume_builder/bundles/bundle_[role_type].md` — Section 5 (Cover Letter)
-5. All significance files from `resume_builder/support/significance_*.md`
+5. `output/CL_VOICE_SIGNALS.md` — centralized user-authored phrasing signals from prior CL edits (treat as soft priors, not hard template rules)
+6. The matching bundle from session file role type → `resume_builder/bundles/bundle_[role_type].md` — Section 5 (Cover Letter)
+7. All significance files from `resume_builder/support/significance_*.md`
 
 **Application Type Check (MANDATORY — before any further work):**
 

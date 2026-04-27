@@ -17,6 +17,71 @@ If no CL .tex provided or found in session file, critique resume alone (Part 7 a
 
 ---
 
+## Pipeline Mode
+
+**Trigger:** `$ARGUMENTS` contains `PIPELINE_MODE=true`
+
+In pipeline mode this skill runs as a **headless sub-agent** with no direct user interaction. At every mandatory stop it writes a structured `CHECKPOINT_RETURN` payload and immediately returns.
+
+Full checkpoint contracts and flow diagrams are in `resume_builder/reference/checkpoint_registry.md`.
+
+### Input Fields (pipeline)
+
+| Field | Description |
+|-------|-------------|
+| `PIPELINE_MODE=true` | Activates this mode |
+| `CHECKPOINT_ID=<id>` | Which checkpoint to stop at |
+| `SESSION_FILE=<path>` | Path to session file (required) |
+| `ARGS=<json>` | User answers from the previous checkpoint; apply before executing |
+
+### Approved Tool Manifest
+
+In pipeline mode **only** these operations are permitted:
+- `bash scripts/safe-run.sh scripts/char_count.sh ...`
+- `bash scripts/safe-run.sh scripts/compile_tex.sh ...`
+- File read/write tools
+- Web search / URL fetch — **only for URLs listed in the session file `## Orchestration State` → `Pre-Authorized URLs` field**. Do not fetch any URL not on that list.
+
+**Any other `bash` invocation** → return `blocked` immediately with `block_reason`.
+
+### Hard Rules
+
+1. **Never ask the user a question directly.** Return `needs_input` with a `questions` array.
+2. **Never stall for approval.** Return `needs_approval`.
+3. **Never run an unlisted command.** Return `blocked`.
+4. **Always write the session file before returning.**
+5. **Preserve non-pipeline behavior** when `PIPELINE_MODE` is absent.
+6. **Never fetch an unlisted URL.** Only fetch URLs present in `## Orchestration State → Pre-Authorized URLs`. Any other URL → return `blocked` with `block_reason: "URL not pre-authorized: <url>"`.
+
+### Return Payload Schema
+
+Same schema as all skills (see `checkpoint_registry.md`). Write as final output, then stop.
+
+### Checkpoint Definitions
+
+#### `critique.phase1.score-return`
+**ARGS applied:** *(none required)*
+**Execution:** Full critique protocol — read session file, run 8-dimension scoring, char count, visual PDF check, tiered improvements, prepare optional evidence questions (max 2); save `critique_<name>.md`.
+**Return:** `needs_input` with questions: `q_score_ack`, `q_evidence_<n>` (up to 2 if evidence questions prepared).
+**Preamble must include:** Overall score (N/100), one sentence per dimension with score, top 2-3 strengths, top Tier 1 issues (max 3 bullet points with dimension and brief description), and a one-line submit-readiness verdict.
+**Postcondition:** Critique: CURRENT (score N/100); `critique_<name>.md` written.
+
+#### `critique.phase1.tier1-decision`
+**ARGS applied:** `q_score_ack`, `q_evidence_<n>`
+**Execution:** Record evidence answers to session Evidence Tracking; parse user response for T1 fix scope. If scope clear → `done`. If unclear → `needs_input`.
+**Return (if unclear):** `needs_input` with question: `q_t1_apply` (options: all | specify subset).
+**Preamble must include (if unclear):** score recap plus numbered Tier 1 fixes with: fix ID/label, affected file+section, and expected impact if applied.
+**Question text rule:** `q_t1_apply` must reference fix IDs from the preamble (never ask this as a generic "what should we do" question without the list).
+**Postcondition:** Evidence Tracking updated; T1 decision recorded in session.
+
+#### `critique.phase1.finalize`
+**ARGS applied:** `q_t1_apply` (if needed)
+**Execution:** Record T1 fix list to session; verify package files exist; determine routing.
+**Return:** `done`. Next: `edit-resume.phase2.plan-confirm` (if T1 fixes) OR `pipeline.review.user-review-prompt` (if none).
+**Postcondition:** T1 fix list finalized in session; routing decision recorded.
+
+---
+
 ## Safety Rules
 
 **Accuracy > Relevance > Impact > ATS > Brevity**

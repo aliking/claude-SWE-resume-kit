@@ -18,69 +18,105 @@ Parse `$ARGUMENTS`:
 
 ---
 
-## JD URL Intake Addendum
+## Pipeline Mode
 
-When the user provides a job URL, perform this intake before Phase 0.
+**Trigger:** `$ARGUMENTS` contains `PIPELINE_MODE=true`
 
-1. Parse URL + optional directive suffixes (`Focus:`, `Emphasize:`, `Downplay:`).
-2. Fetch the posting page content from the URL.
-3. Extract and normalize posting details into the canonical JD format below.
-4. Save to `JDs/<company>_<role>_<yyyymmdd>.txt` (lowercase, underscores; fallback `JDs/temp_job_<yyyymmdd>.txt`).
-5. Continue `/make-resume` using that saved JD path as the source JD.
+In pipeline mode this skill runs as a **headless sub-agent** with no direct user interaction. At every mandatory stop it writes a structured `CHECKPOINT_RETURN` payload and immediately returns — it does **not** wait for user input.
 
-If fetch is partial/blocked:
-- Make one retry.
-- If still blocked, ask user to paste the JD text (or key sections), then write it into the canonical JD format and continue.
+Full checkpoint contracts and flow diagrams are in `resume_builder/reference/checkpoint_registry.md`.
 
-If page has navigation clutter, prioritize core role text over marketing/legal boilerplate.
+### Input Fields (pipeline)
 
-### Canonical JD Format (for all new JD files created from URLs)
+Parse from `$ARGUMENTS`:
 
-Use this exact section order so downstream parsing is consistent:
+| Field | Description |
+|-------|-------------|
+| `PIPELINE_MODE=true` | Activates this mode |
+| `CHECKPOINT_ID=<id>` | Which checkpoint to stop at — run until this checkpoint's stop point, then return |
+| `SESSION_FILE=<path>` | Path to session file (required for all checkpoints except `phase0.strategy-confirm` on first run) |
+| `ARGS=<json>` | JSON string — user answers from the previous checkpoint; apply before executing |
 
-```text
-SOURCE
-- URL: <job URL>
-- Captured: <YYYY-MM-DD>
-- Access Notes: <ok | partial | blocked + note>
+### Approved Tool Manifest
 
-ROLE SNAPSHOT
-- Company: <company name>
-- Role Title: <title>
-- Team/Org: <if available>
-- Location: <onsite/hybrid/remote + city/region>
-- Employment Type: <full-time/contract/etc>
-- Compensation: <if available>
-- Closing Date: <if available>
+In pipeline mode **only** these operations are permitted:
+- `bash scripts/safe-run.sh scripts/char_count.sh ...`
+- `bash scripts/safe-run.sh scripts/compile_tex.sh ...`
+- `bash scripts/safe-run.sh scripts/prep_output.sh ...` (Phase 0 only)
+- File read/write tools
+- Web search / URL fetch — **only for URLs listed in the session file `## Orchestration State` → `Pre-Authorized URLs` field** (set by the orchestrator before invoking this sub-agent). Do not fetch any URL not on that list.
 
-ABOUT
-<short company/role summary from posting>
-
-RESPONSIBILITIES
-- ...
-
-REQUIRED QUALIFICATIONS
-- ...
-
-PREFERRED QUALIFICATIONS
-- ...
-
-TOOLS AND KEYWORDS
-- Languages: ...
-- Frameworks: ...
-- Cloud/Infra: ...
-- Domain Terms: ...
-- Soft Skills: ...
-
-NOTES
-- Any extraction caveats, missing sections, or assumptions.
+**Any other `bash` invocation** → stop immediately and return:
+```json
+{"version":"1","status":"blocked","checkpoint_id":"<current>","block_reason":"Attempted to run <command> — not in Approved Tool Manifest","summary":"Blocked before executing unlisted command"}
 ```
 
-Normalization rules:
-- Preserve factual wording where possible; lightly clean punctuation/whitespace only.
-- Never infer compensation, location, or requirements not present in source.
-- If unknown, use `Not listed`.
-- Remove duplicate bullets and boilerplate EEO text unless it contains role-relevant constraints.
+### Hard Rules
+
+1. **Never ask the user a question directly.** Return `needs_input` with a `questions` array instead.
+2. **Never stall waiting for approval.** Return `needs_approval` with `block_reason` describing what you need.
+3. **Never run an unlisted command.** Return `blocked` immediately.
+4. **Always write the session file before returning.** State must never be lost mid-checkpoint.
+5. **Preserve non-pipeline behavior.** When `PIPELINE_MODE` is absent, all mandatory stops behave as written in the main skill sections.
+6. **Never fetch an unlisted URL.** In pipeline mode, only fetch URLs present in `## Orchestration State → Pre-Authorized URLs`. Any attempt to access a URL not on that list → return `blocked` with `block_reason: "URL not pre-authorized: <url>"`. The orchestrator will pre-authorize and re-invoke.
+
+### Return Payload Schema
+
+Write this JSON block as the final output, then stop:
+```json
+{
+  "version": "1",
+  "status": "done | needs_input | blocked | error",
+  "checkpoint_id": "<current checkpoint id>",
+  "next_checkpoint": "<next checkpoint id or null>",
+  "session_file": "<path>",
+  "output_files": ["<path>"],
+  "preamble": "<context block for user — required when status=needs_input; null otherwise>",
+  "questions": [
+    {"id": "<q_id>", "text": "<question>", "options": ["<option>"], "required": true}
+  ],
+  "block_reason": "<only if blocked>",
+  "error": "<only if error>",
+  "summary": "<one-line summary of what was done>"
+}
+```
+
+### Checkpoint Definitions
+
+#### `make-resume.phase0.strategy-confirm`
+**ARGS applied:** `jd_path`, `directives`
+**Execution:** Full Phase 0 (web research, JD analysis, company context, framing strategy, CL type detection, folder creation, session file write).
+**Web access required:** Yes — 2-3 web searches + possible JD URL fetch. The orchestrator runs URL Pre-Authorization before invoking this checkpoint; web fetches should be pre-approved by the time this sub-agent runs.
+**Return:** `needs_input` with questions: `q_bundle`, `q_framing`, `q_cl_type`, `q_format`.
+**Preamble must include:** Company overview (size, product, stage), role-to-bundle match rationale and recommended bundle, recommended framing angle (and why), detected CL type with reasoning, any notable gaps or flags in the JD (e.g., skill mismatch, seniority ambiguity).
+**Postcondition:** Phase 0: DONE written to session file.
+
+#### `make-resume.phase1.plan-confirm`
+**ARGS applied:** `q_bundle`, `q_framing`, `q_cl_type`, `q_format` (from previous checkpoint)
+**Execution:** Apply confirmations to session file; run full Phase 1 (read bundle + experience files, build bullet plan tables, prepare up to 2 gap-fill questions).
+**Return:** `needs_input` with questions: `q_bullets_<slug>` per position, `q_gap_<n>` if prepared.
+**Preamble must include:** Confirmed bundle + framing angle, total planned bullets per position (with position name and file source), any positions with thin evidence or below-minimum bullets, any gap-fill questions triggered and what they cover.
+**Postcondition:** Bullet Plan tables written; Phase 1: PENDING.
+
+#### `make-resume.phase1.budget-gate`
+**ARGS applied:** `q_bullets_<slug>` per position, `q_gap_<n>` answers
+**Execution:** Apply bullet confirmations + gap answers; update session Bullet Plan; run budget gate against `resume_reference.md`.
+**Return:** `done` (auto-pass, next: `make-resume.phase2.resume-done`) OR `needs_input` with `q_budget_reconcile` if FAIL.
+**Postcondition:** Phase 1: DONE ([N] bullets confirmed).
+
+#### `make-resume.phase2.resume-done`
+**ARGS applied:** `q_budget_reconcile` (if gate needed reconciliation)
+**Optional ARGS controls (from orchestrator):** `response_mode=compact`, `max_return_chars`, `stream_phase2=true`, `phase2_chunk=summary_skills|experience_a|experience_b|compile_finalize`
+**Execution:** Full Phase 2 — generate Summary, Skills, all position bullets; char count gate after each position; compile; page fill gate; save `.tex` and `.pdf`.
+If `stream_phase2=true`, run in compact slices and write detailed progress to session state; when not yet complete, return `done` with `next_checkpoint=make-resume.phase2.resume-done` to continue the next slice.
+**Return:** `done`. Next: `make-cl.phase1.app-type-confirm` (Standard/Form-based) or `critique.phase1.score-return` (No CL).
+**Postcondition:** Phase 2: DONE; `e2e_<name>_resume.tex` + `.pdf` written.
+
+---
+
+## JD URL Intake
+
+When the user provides a job URL, perform the **JD URL Intake** protocol from `resume_builder/reference/shared_ops.md` before Phase 0.
 
 ---
 
@@ -192,8 +228,9 @@ All subsequent output files go in this folder.
 Progress: "Searching for [company] + [domain]..." / "JD analysis: X/Y requirements direct match, Z bridges, W gaps"
 
 ### >>>>>> MANDATORY STOP — DO NOT PROCEED <<<<<<
-Present: research summary, role type + bundle, format, framing strategy.
-Ask user to confirm: (1) role type + bundle, (2) format, (3) framing strategy.
+Present: research summary, role type + bundle, format (from `config.md`), framing strategy.
+Ask user to confirm: (1) role type + bundle, (2) framing strategy.
+For format, default to `config.md` Document Preferences and only discuss application type questions (Standard vs No CL vs Form-based) when relevant.
 **You MUST wait for the user's explicit text response before continuing.**
 Proceeding without confirmation misaligns the entire resume and requires full regeneration.
 
@@ -274,6 +311,8 @@ If you proceed without confirmation, you will generate bullets the user didn't a
 4. `resume_builder/support/leadership_volunteering.md` — canonical fixed section entries (if file exists)
 
 **Read template:** `resume_builder/templates/resume_template.tex` + `.cls`
+**CRITICAL: NEVER read any `.tex` file from `output/` as a formatting reference.** The canonical template is `resume_builder/templates/resume_template.tex` — always and only. Reading a prior session's compiled `.tex` introduces content bleed from a different JD.
+**UNIT CHECK (Phase 2, pipeline mode):** Reject any read of `output/**/*.tex` during Phase 2. If any such read is attempted, return `blocked` with `block_reason: "Phase2 template guard violation: attempted read of output tex"`.
 FIXED sections (from `config.md` FIXED Sections) are template-locked — only generate VARIABLE sections (Summary, Skills, Experience bullets/headers).
 NEVER rewrite, paraphrase, infer, or "fill in" FIXED sections from memory or profile assumptions.
 For FIXED sections, copy verbatim from the template source already configured by the user.
@@ -302,6 +341,8 @@ If a fixed `Leadership \& Volunteering` section is present in the template, popu
 Save .tex to `output/<FolderName>/e2e_<name>_resume.tex`
 
 **Update session file** — add Output Files.
+
+**Pipeline output-size safeguard:** In pipeline mode, checkpoint return text must be compact JSON only. Keep `summary` to one line and write long per-position progress to the session file.
 
 Progress: "Writing Position 1 bullets (6 of 7)..." / "Bullet 4 is SHORT at 184 chars — padding" / "Compiling resume... 2 pages OK"
 

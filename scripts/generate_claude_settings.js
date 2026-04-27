@@ -35,6 +35,7 @@ const path = require('path');
 const repoRoot       = path.join(__dirname, '..');
 const devcontainerPath = path.join(repoRoot, '.devcontainer', 'devcontainer.json');
 const outputPath     = path.join(repoRoot, '.devcontainer', 'claude-settings.json');
+const workspaceHooksDir = path.join(repoRoot, '.github', 'hooks');
 
 // ---------------------------------------------------------------------------
 // Read source
@@ -115,11 +116,56 @@ const claudeDeny = Object.entries(autoApprove)
   .flatMap(([p]) => [`Write(${p})`, `Edit(${p})`]);
 
 // ---------------------------------------------------------------------------
+// Read workspace Copilot hook files and mirror into Claude settings
+// ---------------------------------------------------------------------------
+
+function collectWorkspaceHooks(hooksDir) {
+  const merged = {};
+
+  if (!fs.existsSync(hooksDir)) {
+    return merged;
+  }
+
+  const files = fs.readdirSync(hooksDir)
+    .filter((name) => name.endsWith('.json'))
+    .sort();
+
+  for (const file of files) {
+    const fullPath = path.join(hooksDir, file);
+    let parsed;
+
+    try {
+      parsed = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+    } catch (err) {
+      console.warn(`Skipping invalid hook file: ${path.relative(repoRoot, fullPath)} (${err.message})`);
+      continue;
+    }
+
+    const hooks = parsed?.hooks;
+    if (!hooks || typeof hooks !== 'object') {
+      continue;
+    }
+
+    for (const [eventName, hookList] of Object.entries(hooks)) {
+      if (!Array.isArray(hookList) || hookList.length === 0) {
+        continue;
+      }
+      merged[eventName] = (merged[eventName] || []).concat(hookList);
+    }
+  }
+
+  return merged;
+}
+
+const mirroredHooks = collectWorkspaceHooks(workspaceHooksDir);
+
+// ---------------------------------------------------------------------------
 // Compose settings object (sandbox block stays static)
 // ---------------------------------------------------------------------------
 
 const settings = {
   $schema: 'https://json.schemastore.org/claude-code-settings.json',
+  hooks: mirroredHooks,
   permissions: {
     defaultMode: 'acceptEdits',
     allow: claudeAllow,

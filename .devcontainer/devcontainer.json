@@ -25,31 +25,19 @@
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",
         "chat.tools.terminal.autoApprove": {
-          "^ls( .*)?$": true,
-          "^pwd$": true,
-          "^find( .*)?$": true,
-          "^rg( .*)?$": true,
-          "^cat( .*)?$": true,
-          "^head( .*)?$": true,
-          "^tail( .*)?$": true,
-          "^sed -n( .*)?$": true,
-          "^wc( .*)?$": true,
-          "^command -v( .*)?$": true,
-          "^git (status|diff|log|show)( .*)?$": true,
-          "^node --version$": true,
-          "^npm --version$": true,
-          "^pdflatex --version$": true,
-          "^pdfinfo( .*)?$": true,
+          "/^command -v( .*)?$/": true,
+          "/^node --version$/": true,
+          "/^npm --version$/": true,
+          "/^pdflatex --version$/": true,
+          "/^pdftotext( .*)?$/": true,
+          "/^pdfinfo( .*)?$/": true,
           "/^bash scripts\\/safe-run\\.sh/": { "approve": true, "matchCommandLine": true },
-          "^npm install( .*)?$": false,
-          "^apt-get( .*)?$": false,
-          "^rm( .*)?$": false,
-          "^mv( .*)?$": false,
-          "^cp( .*)?$": false,
-          "^git add( .*)?$": false,
-          "^curl( .*)?$": false,
-          "^wget( .*)?$": false,
-          "^git (commit|merge|push|reset|rebase)( .*)?$": false
+          "/^npm install( .*)?$/": false,
+          "/^apt-get( .*)?$/": false,
+          "/^mv( .*)?$/": false,
+          "/^cp( .*)?$/": false,
+          "/^git add( .*)?$/": false,
+          "/^git (commit|merge|push|reset|rebase)( .*)?$/": false
         },
         "chat.tools.edits.autoApprove": {
           ".devcontainer/devcontainer.json": false,
@@ -57,9 +45,11 @@
           ".devcontainer/claude-settings.json": false,
           "scripts/safe-run.sh": false,
           "scripts/generate_claude_settings.js": false
-        }
+        },
+        "chat.tools.subagent.autoApprove": true
       }
     }
   },
-  "postCreateCommand": "node /workspaces/claude-SWE-resume-kit/scripts/generate_claude_settings.js && pdflatex --version && node --version && python3 --version"
+  "postCreateCommand": "bash /workspaces/claude-SWE-resume-kit/.devcontainer/init-copilot-hooks.sh && node /workspaces/claude-SWE-resume-kit/scripts/generate_claude_settings.js && pdflatex --version && node --version && python3 --version",
+  "postAttachCommand": "bash /workspaces/claude-SWE-resume-kit/.devcontainer/init-copilot-hooks.sh && node /workspaces/claude-SWE-resume-kit/scripts/generate_claude_settings.js"
 }

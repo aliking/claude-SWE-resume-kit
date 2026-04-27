@@ -127,6 +127,33 @@ Note: Any FIXED positions (e.g., internships) are not included in this plan.
 - Items recorded to extractions: [N]
 - New framing strategies discovered: [list]
 
+## Resume Edit Signals
+
+> Written by Resume Edit Capture (shared_ops.md) when user makes direct edits to the .tex resume file.
+> Records change-type signals only — not verbatim resume text.
+
+### [Date] — Resume Edit
+- **Source session:** `output/<FolderName>/session_<name>.md`
+- **Signal category:** bullet-modification | bullet-addition | bullet-removal | summary-rewrite | skills-change | header-change
+- **Description:** [what changed, in general terms]
+- **Routing:** re-critique | targeted-edit | cosmetic-only
+
+## Orchestration State
+
+> Written and maintained by the pipeline orchestrator. Not used in non-pipeline (manual) flows.
+> Update after every checkpoint completion.
+
+- **Pipeline Active:** [true | false]
+- **Current Checkpoint:** [checkpoint_id or NONE]
+- **Last Checkpoint Status:** [done | needs_input | blocked | error | —]
+- **Last Checkpoint Completed:** [YYYY-MM-DD HH:MM or —]
+- **Pending Question Payload:** [checkpoint_id where questions are awaiting user answers, or NONE]
+- **Next Skill:** [skill name or NONE]
+- **Next Checkpoint:** [checkpoint_id or NONE]
+- **Pre-Authorized URLs:** [comma-separated list of URLs approved by orchestrator, or NONE]
+- **Pipeline Error Log:**
+  - [none]
+
 ## Status
 - Phase 0: [PENDING | DONE]
 - Phase 1: [PENDING | DONE (N bullets confirmed)]
