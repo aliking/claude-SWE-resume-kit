@@ -1,5 +1,7 @@
 # claude-SWE-resume-kit
 
+Skeptical collaborator for software engineer resume and cover letters.
+
 Most AI resume tools work the same way: paste resume + paste Job Description, get a rewrite. They don't know which of your work shipped to production, which stayed internal, or which contributions were team-wide programs like mentoring or onboarding. They'll upgrade "contributed to" into "developed" and add entirely made up impacts.
 
 This tool is intended to be a collaborator system that helps you frame real experience accurately. It helps to extract signals from projects, git codebases, review documents and anything else you think can give a good feel for your real work. It then uses those signals to customize a resume and cover letter that are true and defensible, and also tailored.
@@ -79,6 +81,7 @@ Each step uses a **separate agent session** intentionally — fresh context avoi
 - **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** CLI installed and authenticated OR your preferred local agent runner with access to the repo
 - **A LaTeX distribution** for compiling `.tex` to `.pdf` (e.g., [TeX Live](https://tug.org/texlive/), [MacTeX](https://tug.org/mactex/), [MiKTeX](https://miktex.org/))
 - **Your project docs, notes, reviews, or reports** ready for extraction
+
 **N.B.** This repository runs well in a vscode devcontainer with the above dependencies pre-installed. If you have docker, vscode and the devcontainer extension, you can open the repo in a devcontainer and avoid local setup.
 
 ## Full Setup
