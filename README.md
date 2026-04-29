@@ -54,23 +54,12 @@ Try `/getting-started` to see the initial instructions.
 
 **Per application (~15-30 min with review):**
 
-There are two routes. Choose based on how much control you want.
+Run each step in a **separate agent session** — fresh context avoids bias from prior output:
 
-**Route A — automated pipeline (hands-off, but slower):**
-```
-/run-pipeline JDs/target_job.txt
-OR
-/run-pipeline https://company.com/jobs/software-engineer
-```
-The pipeline manager drives the full sequence — Job Description research, resume generation, cover letter, critique, and edit pass — as **checkpointed sub-agent steps**. Each step runs in a fresh context window for quality. When a step needs your input (a provenance question, a gap you want to address, a cover letter draft to review), it pauses and surfaces the question to you directly. You answer, and it continues. Because each stage spawns its own sub-agent, total wall-clock time is longer than running manually.
-
-**Route B — manual, session by session (faster if you know what you're doing):**
-1. Open a new Agent session: `/make-resume JDs/target_job.txt` — or pass a URL
-2. New session: `/make-cl <session_path> ` — cover letter from the session file
-3. New session: `/critique <session_path>` — scored 8-dimension review
-4. New session: `/edit-resume output/<Folder>/resume.tex output/<Folder>/critique.md` — apply fixes and your own feedback
-
-Each step uses a **separate agent session** intentionally — fresh context avoids bias from prior output. Route B is the same steps as Route A, just triggered by you rather than the orchestrator.
+1. `/make-resume JDs/target_job.txt` — or pass a URL directly
+2. `/make-cl <session_path>` — cover letter from the session file
+3. `/critique <session_path>` — scored 8-dimension review
+4. `/edit-resume output/<Folder>/resume.tex output/<Folder>/critique.md` — apply fixes and your own feedback
 
 **Expect to spend real time on the cover letter.** The resume draws from structured KB bullets and is usually strong on the first pass. The cover letter requires narrative voice that the system doesn't have yet. Plan on rewriting it heavily for your first few applications; your edits are captured and used to calibrate future output.
 
@@ -161,19 +150,19 @@ Open the templates in `resume_builder/templates/` and fill in your FIXED section
 
 ### 6. Generate for a job
 
-Run the full pipeline in one command:
+Open a new agent session and run:
 
 ```
-/run-pipeline JDs/target_job.txt
+/make-resume JDs/target_job.txt
 ```
 
-Or start from a posting URL:
+Or pass a posting URL directly:
 
 ```
-/run-pipeline https://company.com/jobs/software-engineer
+/make-resume https://company.com/jobs/software-engineer
 ```
 
-The pipeline manager guides you through resume → cover letter → critique → edit pass, pausing to ask questions at each step. You can also run each stage individually (`/make-resume`, `/make-cl`, `/critique`, `/edit-resume`) in separate sessions if you prefer manual control.
+Then run `/make-cl`, `/critique`, and `/edit-resume` in separate sessions in sequence. Each skill writes a session file that the next one reads — you don't need to pass context manually.
 
 ---
 
@@ -184,19 +173,22 @@ Your Projects + Initiatives --> /setup-extract --> Extractions --> /setup-build-
                                                                           |
                   ┌───────────────────────────────────────────────────────┘
                   ▼
-Job Description --> /run-pipeline ──────────────────────────────────────────────────────────────────┐
-                        │                                                                            │
-                        ├── /make-resume --> Tailored Resume (.tex)                                  │
-                        ├── /make-cl ──── --> Cover Letter (.tex)                                    │
-                        ├── /critique ─── --> 8-Part Score + AI Scan + Fixes                        │
-                        └── /edit-resume -> Refined Package ◄────── your review & CL rewrites ──────┘
+Job Description --> /make-resume --> Tailored Resume (.tex)
+                        │
+                        ▼
+                   /make-cl ──────> Cover Letter (.tex)
+                        │
+                        ▼
+                   /critique ─────> 8-Part Score + AI Scan + Fixes
+                        │
+                        ▼
+                   /edit-resume --> Refined Package ◄── your review & CL rewrites
 ```
 
-The pipeline pauses at each checkpoint to relay questions (provenance gaps, cover letter drafts, critique decisions) and waits for your input before continuing.
+Each skill uses a separate agent session and reads the session file written by the previous step.
 
 | Skill | Purpose | Input | Output |
 |-------|---------|-------|--------|
-| `/run-pipeline` | Full JD pipeline, checkpointed | JD path or URL | Complete package in `output/<Folder>/` |
 | `/setup-extract` | Extract structured data from a project or initiative | Source path | `knowledge_base/extractions/*.md` |
 | `/setup-build-kb` | Build KB from extractions | All extractions | `resume_builder/{experience,bundles,support}/` |
 | `/setup-update` | Incrementally update KB with new material | New source paths | Updated extractions + KB files |

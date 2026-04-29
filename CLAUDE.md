@@ -15,18 +15,11 @@
 ├── make-resume/SKILL.md         # Phase 0-2: JD research → bullet plan → resume generation
 ├── make-cl/SKILL.md             # Cover letter generation from session file
 ├── edit-resume/SKILL.md         # Edit resume from critique or user feedback
-├── critique/SKILL.md            # 8-dimension critique of full package
-└── pipeline-manager/SKILL.md   # /run-pipeline: full JD pipeline orchestrator (all skills in sequence)
-
-.github/agents/
-└── pipeline_orchestrator.agent.md  # Headless orchestrator: drives checkpointed sub-agents, relays questions
-
-resume_builder/reference/
-├── checkpoint_registry.md       # Canonical pipeline checkpoint IDs, contracts, flow diagrams
+└── critique/SKILL.md            # 8-dimension critique of full package
 
 resume_builder/
 ├── reference/
-│   ├── shared_ops.md            # Session startup, derivation, workflow, Resume Edit Capture, Orchestration Lifecycle — ALL skills
+│   ├── shared_ops.md            # Session startup, derivation, workflow, Resume Edit Capture — ALL skills
 │   ├── resume_reference.md      # Resume rules — /make-resume, /edit-resume
 │   ├── cl_reference.md          # CL rules — /make-cl, /edit-resume (CL edits)
 │   ├── critical_rules.md        # Compact re-read — /make-resume Phase 2

@@ -16,103 +16,6 @@ Parse `$ARGUMENTS`:
 - Empty → ask the user for the JD
 - Inline JD text (no file path) → save to `JDs/temp_<company>.txt`, proceed normally
 
----
-
-## Pipeline Mode
-
-**Trigger:** `$ARGUMENTS` contains `PIPELINE_MODE=true`
-
-In pipeline mode this skill runs as a **headless sub-agent** with no direct user interaction. At every mandatory stop it writes a structured `CHECKPOINT_RETURN` payload and immediately returns — it does **not** wait for user input.
-
-Full checkpoint contracts and flow diagrams are in `resume_builder/reference/checkpoint_registry.md`.
-
-### Input Fields (pipeline)
-
-Parse from `$ARGUMENTS`:
-
-| Field | Description |
-|-------|-------------|
-| `PIPELINE_MODE=true` | Activates this mode |
-| `CHECKPOINT_ID=<id>` | Which checkpoint to stop at — run until this checkpoint's stop point, then return |
-| `SESSION_FILE=<path>` | Path to session file (required for all checkpoints except `phase0.strategy-confirm` on first run) |
-| `ARGS=<json>` | JSON string — user answers from the previous checkpoint; apply before executing |
-
-### Approved Tool Manifest
-
-In pipeline mode **only** these operations are permitted:
-- `bash scripts/safe-run.sh scripts/char_count.sh ...`
-- `bash scripts/safe-run.sh scripts/compile_tex.sh ...`
-- `bash scripts/safe-run.sh scripts/prep_output.sh ...` (Phase 0 only)
-- File read/write tools
-- Web search / URL fetch — **only for URLs listed in the session file `## Orchestration State` → `Pre-Authorized URLs` field** (set by the orchestrator before invoking this sub-agent). Do not fetch any URL not on that list.
-
-**Any other `bash` invocation** → stop immediately and return:
-```json
-{"version":"1","status":"blocked","checkpoint_id":"<current>","block_reason":"Attempted to run <command> — not in Approved Tool Manifest","summary":"Blocked before executing unlisted command"}
-```
-
-### Hard Rules
-
-1. **Never ask the user a question directly.** Return `needs_input` with a `questions` array instead.
-2. **Never stall waiting for approval.** Return `needs_approval` with `block_reason` describing what you need.
-3. **Never run an unlisted command.** Return `blocked` immediately.
-4. **Always write the session file before returning.** State must never be lost mid-checkpoint.
-5. **Preserve non-pipeline behavior.** When `PIPELINE_MODE` is absent, all mandatory stops behave as written in the main skill sections.
-6. **Never fetch an unlisted URL.** In pipeline mode, only fetch URLs present in `## Orchestration State → Pre-Authorized URLs`. Any attempt to access a URL not on that list → return `blocked` with `block_reason: "URL not pre-authorized: <url>"`. The orchestrator will pre-authorize and re-invoke.
-
-### Return Payload Schema
-
-Write this JSON block as the final output, then stop:
-```json
-{
-  "version": "1",
-  "status": "done | needs_input | blocked | error",
-  "checkpoint_id": "<current checkpoint id>",
-  "next_checkpoint": "<next checkpoint id or null>",
-  "session_file": "<path>",
-  "output_files": ["<path>"],
-  "preamble": "<context block for user — required when status=needs_input; null otherwise>",
-  "questions": [
-    {"id": "<q_id>", "text": "<question>", "options": ["<option>"], "required": true}
-  ],
-  "block_reason": "<only if blocked>",
-  "error": "<only if error>",
-  "summary": "<one-line summary of what was done>"
-}
-```
-
-### Checkpoint Definitions
-
-#### `make-resume.phase0.strategy-confirm`
-**ARGS applied:** `jd_path`, `directives`
-**Execution:** Full Phase 0 (web research, JD analysis, company context, framing strategy, CL type detection, folder creation, session file write).
-**Web access required:** Yes — 2-3 web searches + possible JD URL fetch. The orchestrator runs URL Pre-Authorization before invoking this checkpoint; web fetches should be pre-approved by the time this sub-agent runs.
-**Return:** `needs_input` with questions: `q_bundle`, `q_framing`, `q_cl_type`, `q_format`.
-**Preamble must include:** Company overview (size, product, stage), role-to-bundle match rationale and recommended bundle, recommended framing angle (and why), detected CL type with reasoning, any notable gaps or flags in the JD (e.g., skill mismatch, seniority ambiguity).
-**Postcondition:** Phase 0: DONE written to session file.
-
-#### `make-resume.phase1.plan-confirm`
-**ARGS applied:** `q_bundle`, `q_framing`, `q_cl_type`, `q_format` (from previous checkpoint)
-**Execution:** Apply confirmations to session file; run full Phase 1 (read bundle + experience files, build bullet plan tables, prepare up to 2 gap-fill questions).
-**Return:** `needs_input` with questions: `q_bullets_<slug>` per position, `q_gap_<n>` if prepared.
-**Preamble must include:** Confirmed bundle + framing angle, total planned bullets per position (with position name and file source), any positions with thin evidence or below-minimum bullets, any gap-fill questions triggered and what they cover.
-**Postcondition:** Bullet Plan tables written; Phase 1: PENDING.
-
-#### `make-resume.phase1.budget-gate`
-**ARGS applied:** `q_bullets_<slug>` per position, `q_gap_<n>` answers
-**Execution:** Apply bullet confirmations + gap answers; update session Bullet Plan; run budget gate against `resume_reference.md`.
-**Return:** `done` (auto-pass, next: `make-resume.phase2.resume-done`) OR `needs_input` with `q_budget_reconcile` if FAIL.
-**Postcondition:** Phase 1: DONE ([N] bullets confirmed).
-
-#### `make-resume.phase2.resume-done`
-**ARGS applied:** `q_budget_reconcile` (if gate needed reconciliation)
-**Optional ARGS controls (from orchestrator):** `response_mode=compact`, `max_return_chars`, `stream_phase2=true`, `phase2_chunk=summary_skills|experience_a|experience_b|compile_finalize`
-**Execution:** Full Phase 2 — generate Summary, Skills, all position bullets; char count gate after each position; compile; page fill gate; save `.tex` and `.pdf`.
-If `stream_phase2=true`, run in compact slices and write detailed progress to session state; when not yet complete, return `done` with `next_checkpoint=make-resume.phase2.resume-done` to continue the next slice.
-**Return:** `done`. Next: `make-cl.phase1.app-type-confirm` (Standard/Form-based) or `critique.phase1.score-return` (No CL).
-**Postcondition:** Phase 2: DONE; `e2e_<name>_resume.tex` + `.pdf` written.
-
----
 
 ## JD URL Intake
 
@@ -392,10 +295,16 @@ Check `Application Type` from session file, then update status accordingly:
 Present: resume compilation summary (pages, char count results, any violations fixed).
 **You MUST wait for the user's explicit text response before continuing.**
 
+**Invite a review pass.** Ask the user to open the compiled PDF and read through it as a recruiter would. Specifically prompt them to flag:
+- Anything that feels **overstated** or claims more ownership than they had
+- Any achievement or skill that is **missing** and should appear
+- Any bullet that reads **awkwardly**, is too vague, or uses the wrong verb
+- Any position header, title, or date that is **incorrect**
+
 Present next steps based on application type:
-- **Standard:** "Resume compiled and verified. Next steps:\n1. /clear\n2. [exact /make-cl command with session file path]"
-- **No CL:** "Resume compiled and verified (resume-only application — no cover letter).\nNext steps:\n1. /clear\n2. [exact /critique command with session file path]"
-- **Form-based:** "Resume compiled and verified. Form questions recorded — /make-cl will use them as paragraph headings.\nNext steps:\n1. /clear\n2. [exact /make-cl command with session file path]"
+- **Standard:** "Resume compiled and verified. Open the PDF and give me any feedback — overstated claims, missing achievements, awkward bullets, or anything else. When you\'re happy with it:\n1. /clear\n2. [exact /make-cl command with session file path]"
+- **No CL:** "Resume compiled and verified (resume-only application — no cover letter). Open the PDF and give me any feedback — overstated claims, missing achievements, awkward bullets, or anything else. When you\'re happy with it:\n1. /clear\n2. [exact /critique command with session file path]"
+- **Form-based:** "Resume compiled and verified. Form questions recorded — /make-cl will use them as paragraph headings. Open the PDF and give me any feedback — overstated claims, missing achievements, awkward bullets, or anything else. When you\'re happy with it:\n1. /clear\n2. [exact /make-cl command with session file path]"
 
 If the user wants a submission-safe PDF name immediately, run:
 ```bash
