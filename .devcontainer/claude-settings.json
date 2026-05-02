@@ -4,7 +4,7 @@
     "PreToolUse": [
       {
         "type": "command",
-        "command": "node ./scripts/hooks/pretooluse_block_devnull.js",
+        "command": "node ./scripts/hooks/pretooluse_terminal_policy_guard.js",
         "timeout": 10
       }
     ]

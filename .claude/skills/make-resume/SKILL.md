@@ -15,6 +15,7 @@ Parse `$ARGUMENTS`:
 - "Quick:" prefix → Quick Mode (see below)
 - Empty → ask the user for the JD
 - Inline JD text (no file path) → save to `JDs/temp_<company>.txt`, proceed normally
+- set session name to `<company> Make Resume` (derived from JD filename or URL)
 
 
 ## JD URL Intake

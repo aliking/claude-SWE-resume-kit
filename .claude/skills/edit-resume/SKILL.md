@@ -12,6 +12,7 @@ Parse `$ARGUMENTS`: First argument is the .tex file path (required). A `.md` pat
 - `/edit-resume output/Acme/e2e_acme_resume.tex`
 - `/edit-resume output/Acme/e2e_acme_resume.tex output/Acme/critique_acme.md`
 - `/edit-resume output/Acme/e2e_acme_resume.tex "shorten Position 1 header, fill last page"`
+- set session name to `<company> Edit Resume` (derived from JD filename or URL)
 
 If only .tex path and no instructions: ask the user what to fix.
 

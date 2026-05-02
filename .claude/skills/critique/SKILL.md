@@ -12,6 +12,7 @@ Parse `$ARGUMENTS`:
 - Session file path (e.g., `output/Acme/session_acme_engineer.md`) → read session file, derive .tex paths from Output Files
 - .tex file path(s) + JD source (existing format) → backward compatible
 - Session name (e.g., `acme_engineer`) → find session file via derivation
+- set session name to `<company> Critique` (derived from JD filename or URL)
 
 If no CL .tex provided or found in session file, critique resume alone (Part 7 adjustments noted below).
 

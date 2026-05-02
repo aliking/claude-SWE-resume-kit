@@ -2,6 +2,8 @@
 
 > This file is auto-loaded by Claude Code. It provides project-wide rules for all skills.
 
+> **NEVER EDIT THIS FILE.** `CLAUDE.md` is a read-only system file. Do not write session state, user data, job titles, company names, or any runtime content here. All mutable state belongs in `output/SESSIONS.md`, session files, or `config.md`.
+
 ---
 
 ## File Map
@@ -137,9 +139,9 @@ For char counting: `\ce{TiO2}` → 4 rendered chars, `$\beta$` → 1 rendered ch
 
 ## Active Sessions
 
-_Stored in `SESSIONS.md` (gitignored). Read that file for current session state._
+_Stored in `output/SESSIONS.md` (gitignored). Read and write that file for current session state. **Never write session data here.**_
 
-> **At startup:** read `SESSIONS.md` if it exists and use it as the source of truth for active sessions.
+> **At startup:** read `output/SESSIONS.md` if it exists and use it as the sole source of truth for active sessions. Do not copy session entries into this file.
 
 ---
 

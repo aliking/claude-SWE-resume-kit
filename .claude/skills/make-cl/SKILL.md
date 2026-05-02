@@ -12,6 +12,7 @@ Parse `$ARGUMENTS`:
 - Session file path (e.g., `output/Acme/session_acme_engineer.md`) → read that session file
 - Session name (e.g., `acme_engineer`) → find session file via shared_ops.md derivation
 - Empty → check `CLAUDE.md` Active Sessions for latest
+- set session name to `<company> Make CL` (derived from JD filename or URL)
 
 
 ## Safety Rules (ALWAYS ENFORCED)

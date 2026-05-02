@@ -6,7 +6,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 HOOK_DIR="${REPO_ROOT}/.github/hooks"
 HOOK_FILE="${HOOK_DIR}/terminal-devnull-guard.json"
-HOOK_SCRIPT="${REPO_ROOT}/scripts/hooks/pretooluse_block_devnull.js"
+HOOK_SCRIPT="${REPO_ROOT}/scripts/hooks/pretooluse_terminal_policy_guard.js"
 
 mkdir -p "${HOOK_DIR}"
 
@@ -16,7 +16,7 @@ cat > "${HOOK_FILE}" <<'JSON'
     "PreToolUse": [
       {
         "type": "command",
-        "command": "node ./scripts/hooks/pretooluse_block_devnull.js",
+        "command": "node ./scripts/hooks/pretooluse_terminal_policy_guard.js",
         "timeout": 10
       }
     ]
